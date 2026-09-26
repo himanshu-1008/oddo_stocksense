@@ -348,19 +348,14 @@ export default function ReceiptDetailPage() {
         {/* Metadata Details Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
           <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 rounded-xl space-y-1">
-            <span className="text-slate-500 dark:text-slate-400 font-medium">Destination Facility & Location</span>
+            <span className="text-slate-500 dark:text-slate-400 font-medium">Destination Facility</span>
             <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200 font-semibold">
               <Building2 className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>{receipt.warehouse?.name || "General Facility"}</span>
             </div>
-            {receipt.destinationLocation ? (
-              <span className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium flex items-center gap-1">
-                <MapPin className="h-3 w-3" />
-                {receipt.destinationLocation.name} ({receipt.destinationLocation.code})
-              </span>
-            ) : receipt.warehouse?.code ? (
+            {receipt.warehouse?.code && (
               <span className="font-mono text-[10px] text-slate-500 dark:text-slate-400">({receipt.warehouse.code})</span>
-            ) : null}
+            )}
           </div>
 
           <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 rounded-xl space-y-1">
@@ -424,7 +419,6 @@ export default function ReceiptDetailPage() {
               <tr>
                 <th className="py-3 px-6">Product</th>
                 <th className="py-3 px-6">SKU</th>
-                <th className="py-3 px-6">Destination Location</th>
                 <th className="py-3 px-6 text-right">Received Quantity</th>
                 <th className="py-3 px-6 text-center">UOM</th>
               </tr>
@@ -447,15 +441,6 @@ export default function ReceiptDetailPage() {
                     <span className="font-mono text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-slate-700 dark:text-slate-300">
                       {item.product.sku}
                     </span>
-                  </td>
-                  <td className="py-3.5 px-6">
-                    <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
-                      <MapPin className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
-                      <span>{item.location?.name || "Warehouse Default"}</span>
-                      {item.location?.code && (
-                        <span className="text-xs text-slate-400 font-mono">({item.location.code})</span>
-                      )}
-                    </div>
                   </td>
                   <td className="py-3.5 px-6 text-right font-semibold text-slate-900 dark:text-slate-100 text-sm">
                     {item.quantityReceived.toLocaleString()}
@@ -494,7 +479,7 @@ export default function ReceiptDetailPage() {
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              This will add the received quantities (<strong>{totalQuantity.toLocaleString()} units</strong>) directly into the specified warehouse locations and create permanent audit entries in the Stock Ledger.
+              This will add the received quantities (<strong>{totalQuantity.toLocaleString()} units</strong>) directly into warehouse inventory and create permanent audit entries in the Stock Ledger.
             </p>
 
             <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 rounded-xl text-[11px] text-slate-500 dark:text-slate-400 space-y-1">

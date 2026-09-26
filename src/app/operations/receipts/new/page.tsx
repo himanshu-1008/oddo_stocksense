@@ -31,13 +31,6 @@ interface WarehouseOption {
   code: string;
 }
 
-interface LocationOption {
-  id: string;
-  name: string;
-  code: string;
-  warehouseId?: string | null;
-}
-
 interface ProductOption {
   id: string;
   name: string;
@@ -49,7 +42,6 @@ interface ProductOption {
 interface ReceiptLineItem {
   id: string;
   productId: string;
-  locationId: string;
   quantityReceived: number;
   uom: string;
 }
@@ -61,7 +53,6 @@ export default function NewReceiptPage() {
   // Data Sources
   const [suppliers, setSuppliers] = React.useState<SupplierOption[]>([]);
   const [warehouses, setWarehouses] = React.useState<WarehouseOption[]>([]);
-  const [locations, setLocations] = React.useState<LocationOption[]>([]);
   const [products, setProducts] = React.useState<ProductOption[]>([]);
   const [dataLoading, setDataLoading] = React.useState(true);
 
@@ -69,7 +60,6 @@ export default function NewReceiptPage() {
   const [supplierName, setSupplierName] = React.useState("");
   const [supplierId, setSupplierId] = React.useState("");
   const [warehouseId, setWarehouseId] = React.useState("");
-  const [destinationLocationId, setDestinationLocationId] = React.useState("");
   const [scheduledDate, setScheduledDate] = React.useState("");
   const [notes, setNotes] = React.useState("");
 
@@ -78,7 +68,6 @@ export default function NewReceiptPage() {
     {
       id: "line-1",
       productId: "",
-      locationId: "",
       quantityReceived: 1,
       uom: "PCS",
     },
@@ -103,10 +92,9 @@ export default function NewReceiptPage() {
     async function loadMasterData() {
       try {
         setDataLoading(true);
-        const [supRes, whRes, locRes, prodRes] = await Promise.all([
+        const [supRes, whRes, prodRes] = await Promise.all([
           fetch("/api/suppliers?limit=100"),
           fetch("/api/warehouses?limit=100&status=ACTIVE"),
-          fetch("/api/locations?limit=200&status=ACTIVE"),
           fetch("/api/products?limit=100&status=ACTIVE"),
         ]);
 
@@ -124,11 +112,6 @@ export default function NewReceiptPage() {
           }
         }
 
-        if (locRes.ok) {
-          const d = await locRes.json();
-          setLocations(d.data || []);
-        }
-
         if (prodRes.ok) {
           const d = await prodRes.json();
           setProducts(d.data || []);
@@ -142,26 +125,6 @@ export default function NewReceiptPage() {
 
     loadMasterData();
   }, []);
-
-  // Filter Locations by Selected Warehouse
-  const warehouseLocations = React.useMemo(() => {
-    if (!warehouseId) return locations;
-    return locations.filter((loc) => loc.warehouseId === warehouseId);
-  }, [locations, warehouseId]);
-
-  // Set default location for items when warehouse changes
-  React.useEffect(() => {
-    if (warehouseLocations.length > 0) {
-      const defaultLocId = warehouseLocations[0].id;
-      setDestinationLocationId(defaultLocId);
-      setItems((prev) =>
-        prev.map((item) => ({
-          ...item,
-          locationId: item.locationId || defaultLocId,
-        }))
-      );
-    }
-  }, [warehouseLocations]);
 
   // Handle Line Item Updates
   const handleItemChange = (index: number, field: keyof ReceiptLineItem, value: any) => {
@@ -181,13 +144,11 @@ export default function NewReceiptPage() {
   };
 
   const handleAddLine = () => {
-    const defaultLoc = warehouseLocations[0]?.id || "";
     setItems([
       ...items,
       {
         id: `line-${Date.now()}`,
         productId: "",
-        locationId: defaultLoc,
         quantityReceived: 1,
         uom: "PCS",
       },
@@ -276,10 +237,6 @@ export default function NewReceiptPage() {
         setErrorMessage(`Please select a product for line #${i + 1}.`);
         return;
       }
-      if (!item.locationId) {
-        setErrorMessage(`Please select a destination location for line #${i + 1}.`);
-        return;
-      }
       if (item.quantityReceived <= 0) {
         setErrorMessage(`Quantity for line #${i + 1} must be greater than 0.`);
         return;
@@ -293,12 +250,10 @@ export default function NewReceiptPage() {
         supplierName: supplierName.trim(),
         supplierId: supplierId || null,
         warehouseId,
-        destinationLocationId: destinationLocationId || null,
         scheduledDate: scheduledDate ? new Date(scheduledDate).toISOString() : null,
         notes: notes.trim() || null,
         items: items.map((it) => ({
           productId: it.productId,
-          locationId: it.locationId,
           quantityReceived: Number(it.quantityReceived),
           uom: it.uom,
         })),
@@ -446,40 +401,6 @@ export default function NewReceiptPage() {
               </p>
             </div>
 
-            {/* Destination Location */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                Default Destination Location <span className="text-rose-500">*</span>
-              </label>
-              <select
-                value={destinationLocationId}
-                onChange={(e) => {
-                  const newLocId = e.target.value;
-                  setDestinationLocationId(newLocId);
-                  setItems((prev) =>
-                    prev.map((item) => ({
-                      ...item,
-                      locationId: newLocId,
-                    }))
-                  );
-                }}
-                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-              >
-                {warehouseLocations.length === 0 ? (
-                  <option value="">No locations configured</option>
-                ) : (
-                  warehouseLocations.map((loc) => (
-                    <option key={loc.id} value={loc.id}>
-                      {loc.name} ({loc.code})
-                    </option>
-                  ))
-                )}
-              </select>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                Putaway storage location for incoming inventory.
-              </p>
-            </div>
-
             {/* Scheduled Date */}
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
@@ -517,7 +438,7 @@ export default function NewReceiptPage() {
                 Received Product Lines
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Specify quantities and destination location for each item.
+                Specify product and quantity for each item received.
               </p>
             </div>
 
@@ -536,10 +457,9 @@ export default function NewReceiptPage() {
             <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
               <thead className="bg-slate-50 dark:bg-slate-800/50 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="py-3 px-4 min-w-[240px]">Product Item</th>
-                  <th className="py-3 px-4 min-w-[180px]">Destination Location</th>
-                  <th className="py-3 px-4 w-32 text-right">Quantity</th>
-                  <th className="py-3 px-4 w-24 text-center">UOM</th>
+                  <th className="py-3 px-4 min-w-[280px]">Product Item</th>
+                  <th className="py-3 px-4 w-36 text-right">Quantity</th>
+                  <th className="py-3 px-4 w-28 text-center">UOM</th>
                   <th className="py-3 px-4 w-12 text-center"></th>
                 </tr>
               </thead>
@@ -557,22 +477,6 @@ export default function NewReceiptPage() {
                         {products.map((p) => (
                           <option key={p.id} value={p.id}>
                             {p.name} ({p.sku}) {p.category ? `• ${p.category.name}` : ""}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-
-                    {/* Location Select */}
-                    <td className="py-3 px-4">
-                      <select
-                        value={item.locationId}
-                        onChange={(e) => handleItemChange(index, "locationId", e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                      >
-                        <option value="">-- Choose Location --</option>
-                        {warehouseLocations.map((loc) => (
-                          <option key={loc.id} value={loc.id}>
-                            {loc.name} ({loc.code})
                           </option>
                         ))}
                       </select>

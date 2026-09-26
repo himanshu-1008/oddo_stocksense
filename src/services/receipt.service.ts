@@ -55,7 +55,7 @@ export class ReceiptService {
       throw new ValidationError("Selected destination warehouse is inactive.");
     }
 
-    // 3. Validate Line Items (Product & Warehouse Location pairing)
+    // 3. Validate Line Items (Product & Warehouse)
     for (const item of validated.items) {
       const product = await productRepository.findById(item.productId);
       if (!product) {
@@ -67,21 +67,23 @@ export class ReceiptService {
         );
       }
 
-      const location = await locationRepository.findById(item.locationId);
-      if (!location) {
-        throw new NotFoundError(`Location (${item.locationId})`);
-      }
-      if (!location.isActive) {
-        throw new ValidationError(
-          `Destination location "${location.name}" is deactivated.`
-        );
-      }
+      if (item.locationId) {
+        const location = await locationRepository.findById(item.locationId);
+        if (!location) {
+          throw new NotFoundError(`Location (${item.locationId})`);
+        }
+        if (!location.isActive) {
+          throw new ValidationError(
+            `Destination location "${location.name}" is deactivated.`
+          );
+        }
 
-      // Ensure location belongs to the selected warehouse
-      if (location.warehouseId !== validated.warehouseId) {
-        throw new ValidationError(
-          `Location "${location.name}" does not belong to warehouse "${warehouse.name}".`
-        );
+        // Ensure location belongs to the selected warehouse
+        if (location.warehouseId !== validated.warehouseId) {
+          throw new ValidationError(
+            `Location "${location.name}" does not belong to warehouse "${warehouse.name}".`
+          );
+        }
       }
     }
 
@@ -111,11 +113,13 @@ export class ReceiptService {
           throw new ValidationError(`Invalid or inactive product in receipt items.`);
         }
 
-        const location = await locationRepository.findById(item.locationId);
-        if (!location || location.warehouseId !== warehouseId) {
-          throw new ValidationError(
-            `Location "${location?.name || item.locationId}" does not belong to the selected warehouse.`
-          );
+        if (item.locationId) {
+          const location = await locationRepository.findById(item.locationId);
+          if (!location || location.warehouseId !== warehouseId) {
+            throw new ValidationError(
+              `Location "${location?.name || item.locationId}" does not belong to the selected warehouse.`
+            );
+          }
         }
       }
     }

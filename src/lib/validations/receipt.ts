@@ -25,7 +25,7 @@ export const updateSupplierSchema = supplierSchema.partial();
 
 export const receiptItemInputSchema = z.object({
   productId: z.string().min(1, "Product is required"),
-  locationId: z.string().min(1, "Destination location is required"),
+  locationId: z.string().optional().nullable(),
   quantityReceived: z.coerce
     .number()
     .positive("Received quantity must be greater than 0")

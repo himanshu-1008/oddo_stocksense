@@ -167,13 +167,22 @@ export class ReceiptRepository {
   ) {
     const referenceNumber = await this.generateReceiptNumber();
 
+    let defaultLocationId = data.destinationLocationId || null;
+    if (!defaultLocationId && data.warehouseId) {
+      const defaultLoc = await prisma.location.findFirst({
+        where: { warehouseId: data.warehouseId, isActive: true },
+        orderBy: { createdAt: "asc" },
+      });
+      defaultLocationId = defaultLoc?.id || null;
+    }
+
     return prisma.receipt.create({
       data: {
         referenceNumber,
         supplierName: data.supplierName.trim(),
         supplierId: data.supplierId || null,
         warehouseId: data.warehouseId || null,
-        destinationLocationId: data.destinationLocationId || null,
+        destinationLocationId: defaultLocationId,
         scheduledDate: data.scheduledDate || null,
         notes: data.notes?.trim() || null,
         status: OperationStatus.DRAFT,
@@ -181,7 +190,7 @@ export class ReceiptRepository {
         items: {
           create: data.items.map((item) => ({
             productId: item.productId,
-            locationId: item.locationId,
+            locationId: item.locationId || defaultLocationId,
             quantityExpected: item.quantityReceived,
             quantityReceived: item.quantityReceived,
             uom: item.uom || "PCS",
@@ -225,6 +234,16 @@ export class ReceiptRepository {
       );
     }
 
+    const warehouseId = data.warehouseId || existing.warehouseId;
+    let defaultLocationId = data.destinationLocationId || existing.destinationLocationId;
+    if (!defaultLocationId && warehouseId) {
+      const defaultLoc = await prisma.location.findFirst({
+        where: { warehouseId, isActive: true },
+        orderBy: { createdAt: "asc" },
+      });
+      defaultLocationId = defaultLoc?.id || null;
+    }
+
     return prisma.$transaction(
       async (tx) => {
         // If items provided, replace them
@@ -237,7 +256,7 @@ export class ReceiptRepository {
           data: data.items.map((item) => ({
             receiptId: id,
             productId: item.productId,
-            locationId: item.locationId,
+            locationId: item.locationId || defaultLocationId,
             quantityExpected: item.quantityReceived,
             quantityReceived: item.quantityReceived,
             uom: item.uom || "PCS",
@@ -252,7 +271,7 @@ export class ReceiptRepository {
           ...(data.supplierId !== undefined ? { supplierId: data.supplierId || null } : {}),
           ...(data.warehouseId !== undefined ? { warehouseId: data.warehouseId || null } : {}),
           ...(data.destinationLocationId !== undefined
-            ? { destinationLocationId: data.destinationLocationId || null }
+            ? { destinationLocationId: data.destinationLocationId || defaultLocationId }
             : {}),
           ...(data.scheduledDate !== undefined ? { scheduledDate: data.scheduledDate || null } : {}),
           ...(data.notes !== undefined ? { notes: data.notes?.trim() || null } : {}),
@@ -305,9 +324,26 @@ export class ReceiptRepository {
         throw new ValidationError("Cannot validate a receipt with no line items.");
       }
 
+      // Resolve default warehouse location if line items don't have one
+      let warehouseDefaultLocId = receipt.destinationLocationId;
+      if (!warehouseDefaultLocId && receipt.warehouseId) {
+        const whLoc = await tx.location.findFirst({
+          where: { warehouseId: receipt.warehouseId, isActive: true },
+          orderBy: { createdAt: "asc" },
+        });
+        warehouseDefaultLocId = whLoc?.id || null;
+      }
+      if (!warehouseDefaultLocId) {
+        const fallbackLoc = await tx.location.findFirst({
+          where: { isActive: true },
+          orderBy: { createdAt: "asc" },
+        });
+        warehouseDefaultLocId = fallbackLoc?.id || null;
+      }
+
       // 3. Process every line item atomically
       for (const item of receipt.items) {
-        const targetLocationId = item.locationId || receipt.destinationLocationId;
+        const targetLocationId = item.locationId || receipt.destinationLocationId || warehouseDefaultLocId;
         if (!targetLocationId) {
           throw new ValidationError(
             `Line item for product "${item.product.name}" is missing a destination location.`
