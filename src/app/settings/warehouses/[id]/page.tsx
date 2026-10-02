@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   Building2,
   MapPin,
@@ -13,14 +13,10 @@ import {
   Boxes,
   Layers,
   Search,
-  CheckCircle2,
-  XCircle,
   AlertCircle,
   Loader2,
-  PackageCheck,
   Package,
 } from "lucide-react";
-import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,7 +67,6 @@ interface WarehouseDetail {
 
 export default function WarehouseDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params?.id as string;
   const { user } = useAuth();
   const canManage = user?.role === "ADMIN" || user?.role === "INVENTORY_MANAGER";
@@ -289,8 +284,8 @@ export default function WarehouseDetailPage() {
   if (loading) {
     return (
       <div className="py-24 text-center">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto text-emerald-400 mb-3" />
-        <p className="text-sm text-zinc-400">Loading facility details from PostgreSQL...</p>
+        <Loader2 className="h-8 w-8 animate-spin mx-auto text-indigo-600 dark:text-indigo-400 mb-3" />
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading facility details...</p>
       </div>
     );
   }
@@ -298,13 +293,13 @@ export default function WarehouseDetailPage() {
   if (error || !warehouse) {
     return (
       <div className="max-w-xl mx-auto py-16 text-center space-y-4">
-        <AlertCircle className="h-12 w-12 text-red-400 mx-auto" />
-        <h2 className="text-xl font-bold text-zinc-100">Facility Not Found</h2>
-        <p className="text-sm text-zinc-400">
-          {error || "The requested warehouse could not be found in the database."}
+        <AlertCircle className="h-12 w-12 text-rose-500 mx-auto" />
+        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Facility Not Found</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          {error || "The requested warehouse could not be found."}
         </p>
         <Link href="/settings/warehouses">
-          <Button variant="outline" className="border-zinc-700">
+          <Button variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Warehouses
           </Button>
         </Link>
@@ -318,35 +313,35 @@ export default function WarehouseDetailPage() {
       <div className="flex items-center justify-between">
         <Link
           href="/settings/warehouses"
-          className="inline-flex items-center text-xs font-medium text-zinc-400 hover:text-emerald-400 transition-colors"
+          className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Back to Warehouses List
         </Link>
       </div>
 
       {/* Warehouse Overview Card */}
-      <Card className="p-6 bg-zinc-900/60 border-zinc-800 shadow-xl space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/80 pb-5">
+      <Card className="p-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
           <div className="flex items-start gap-4">
-            <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 shrink-0">
+            <div className="p-3.5 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/50 rounded-xl text-indigo-600 dark:text-indigo-400 shrink-0">
               <Building2 className="h-7 w-7" />
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="text-2xl font-bold text-zinc-100">{warehouse.name}</h1>
-                <span className="font-mono text-xs px-2.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 font-semibold text-zinc-200">
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{warehouse.name}</h1>
+                <span className="font-mono text-xs px-2.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold text-slate-800 dark:text-slate-200">
                   {warehouse.code}
                 </span>
                 <StatusBadge status={warehouse.isActive ? "ACTIVE" : "INACTIVE"} />
               </div>
               {warehouse.address && (
-                <div className="flex items-center gap-1.5 text-xs text-zinc-400 mt-1.5">
-                  <MapPin className="h-3.5 w-3.5 text-zinc-500" />
+                <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-slate-400" />
                   <span>{warehouse.address}</span>
                 </div>
               )}
               {warehouse.description && (
-                <p className="text-xs text-zinc-400 mt-1.5 max-w-2xl">{warehouse.description}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 max-w-2xl">{warehouse.description}</p>
               )}
             </div>
           </div>
@@ -355,7 +350,7 @@ export default function WarehouseDetailPage() {
             {canManage && (
               <Button
                 onClick={handleOpenAddLocation}
-                className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-semibold shadow-lg shadow-emerald-500/20"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-sm"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Location
@@ -366,27 +361,27 @@ export default function WarehouseDetailPage() {
 
         {/* Quick Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-3.5 bg-zinc-950/60 border border-zinc-800/80 rounded-xl">
-            <p className="text-[11px] text-zinc-400 font-medium">Configured Locations</p>
-            <p className="text-xl font-bold text-zinc-100 mt-1">
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 rounded-xl">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Configured Locations</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
               {warehouse.locations?.length || 0}
             </p>
           </div>
-          <div className="p-3.5 bg-zinc-950/60 border border-zinc-800/80 rounded-xl">
-            <p className="text-[11px] text-zinc-400 font-medium">SKUs Stored Here</p>
-            <p className="text-xl font-bold text-emerald-400 mt-1">
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 rounded-xl">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">SKUs Stored Here</p>
+            <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">
               {allStockItems.length}
             </p>
           </div>
-          <div className="p-3.5 bg-zinc-950/60 border border-zinc-800/80 rounded-xl">
-            <p className="text-[11px] text-zinc-400 font-medium">Total On-Hand Quantity</p>
-            <p className="text-xl font-bold text-blue-400 mt-1">
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 rounded-xl">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Total On-Hand Quantity</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
               {totalStockUnits.toLocaleString()} units
             </p>
           </div>
-          <div className="p-3.5 bg-zinc-950/60 border border-zinc-800/80 rounded-xl">
-            <p className="text-[11px] text-zinc-400 font-medium">Registered Date</p>
-            <p className="text-xs font-semibold text-zinc-300 mt-1.5">
+          <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 rounded-xl">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Registered Date</p>
+            <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-1.5">
               {new Date(warehouse.createdAt).toLocaleDateString()}
             </p>
           </div>
@@ -394,13 +389,13 @@ export default function WarehouseDetailPage() {
       </Card>
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-zinc-800">
+      <div className="flex border-b border-slate-200 dark:border-slate-800">
         <button
           onClick={() => setActiveTab("locations")}
           className={`px-5 py-3 text-sm font-semibold border-b-2 flex items-center gap-2 transition-colors ${
             activeTab === "locations"
-              ? "border-emerald-500 text-emerald-400"
-              : "border-transparent text-zinc-400 hover:text-zinc-200"
+              ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
+              : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
           }`}
         >
           <Layers className="h-4 w-4" />
@@ -410,8 +405,8 @@ export default function WarehouseDetailPage() {
           onClick={() => setActiveTab("stock")}
           className={`px-5 py-3 text-sm font-semibold border-b-2 flex items-center gap-2 transition-colors ${
             activeTab === "stock"
-              ? "border-emerald-500 text-emerald-400"
-              : "border-transparent text-zinc-400 hover:text-zinc-200"
+              ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
+              : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
           }`}
         >
           <Boxes className="h-4 w-4" />
@@ -423,23 +418,23 @@ export default function WarehouseDetailPage() {
       {activeTab === "locations" && (
         <div className="space-y-4">
           {/* Location Filters */}
-          <Card className="p-4 bg-zinc-900/60 border-zinc-800 flex flex-col md:flex-row gap-3 justify-between items-stretch md:items-center">
+          <Card className="p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-3 justify-between items-stretch md:items-center">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search locations by name, code..."
                 value={locationSearch}
                 onChange={(e) => setLocationSearch(e.target.value)}
-                className="pl-9 bg-zinc-950/60 border-zinc-700/80 text-sm"
+                className="pl-9 text-sm"
               />
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-zinc-400">
+            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
               <span>Location Type:</span>
               <select
                 value={locationTypeFilter}
                 onChange={(e) => setLocationTypeFilter(e.target.value)}
-                className="bg-zinc-950/60 border border-zinc-700/80 rounded-lg px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="ALL">All Types</option>
                 {LOCATION_TYPES.map((type) => (
@@ -452,26 +447,26 @@ export default function WarehouseDetailPage() {
           </Card>
 
           {/* Locations Table */}
-          <Card className="bg-zinc-900/60 border-zinc-800 overflow-hidden shadow-xl">
+          <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-zinc-300">
-                <thead className="bg-zinc-950/80 text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800">
+              <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                <thead className="bg-slate-50 dark:bg-slate-800/50 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                   <tr>
-                    <th className="py-4 px-6">Location Name</th>
-                    <th className="py-4 px-6">Code</th>
-                    <th className="py-4 px-6">Zone Type</th>
-                    <th className="py-4 px-6">Stocked SKUs</th>
-                    <th className="py-4 px-6">Status</th>
-                    <th className="py-4 px-6 text-right">Actions</th>
+                    <th className="py-3.5 px-6">Location Name</th>
+                    <th className="py-3.5 px-6">Code</th>
+                    <th className="py-3.5 px-6">Zone Type</th>
+                    <th className="py-3.5 px-6">Stocked SKUs</th>
+                    <th className="py-3.5 px-6">Status</th>
+                    <th className="py-3.5 px-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-800/60">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredLocations.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="py-12 text-center">
-                        <MapPin className="h-9 w-9 text-zinc-600 mx-auto mb-2" />
-                        <p className="text-zinc-300 font-medium text-sm">No locations found</p>
-                        <p className="text-zinc-400 text-xs mt-1">
+                        <MapPin className="h-9 w-9 text-slate-400 mx-auto mb-2" />
+                        <p className="text-slate-900 dark:text-slate-100 font-medium text-sm">No locations found</p>
+                        <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
                           {locationSearch || locationTypeFilter !== "ALL"
                             ? "Try adjusting your search query or location type filter."
                             : "Create your first internal storage zone, rack, or work center."}
@@ -481,7 +476,7 @@ export default function WarehouseDetailPage() {
                             onClick={handleOpenAddLocation}
                             variant="outline"
                             size="sm"
-                            className="mt-3.5 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10"
+                            className="mt-3.5"
                           >
                             <Plus className="h-4 w-4 mr-1.5" /> Add Location
                           </Button>
@@ -492,24 +487,24 @@ export default function WarehouseDetailPage() {
                     filteredLocations.map((loc) => (
                       <tr
                         key={loc.id}
-                        className="hover:bg-zinc-800/40 transition-colors group"
+                        className="hover:bg-slate-50/70 dark:hover:bg-slate-800/30 transition-colors group"
                       >
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-3">
-                            <div className="p-2 bg-zinc-800 border border-zinc-700/60 rounded-lg text-emerald-400 shrink-0">
+                            <div className="p-2 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900/50 rounded-lg text-indigo-600 dark:text-indigo-400 shrink-0">
                               <MapPin className="h-4 w-4" />
                             </div>
                             <div>
-                              <div className="font-semibold text-zinc-100 flex items-center gap-2">
+                              <div className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                                 {loc.name}
                                 {loc.isScrap && (
-                                  <span className="text-[10px] px-1.5 py-0.5 bg-red-500/10 border border-red-500/30 text-red-400 rounded">
+                                  <span className="text-[10px] px-1.5 py-0.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 rounded">
                                     Scrap / Loss Zone
                                   </span>
                                 )}
                               </div>
                               {loc.description && (
-                                <p className="text-xs text-zinc-400 mt-0.5 line-clamp-1">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
                                   {loc.description}
                                 </p>
                               )}
@@ -517,17 +512,17 @@ export default function WarehouseDetailPage() {
                           </div>
                         </td>
                         <td className="py-4 px-6">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded font-mono text-xs font-semibold bg-zinc-800 border border-zinc-700/80 text-zinc-200">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded font-mono text-xs font-semibold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200">
                             {loc.code}
                           </span>
                         </td>
                         <td className="py-4 px-6">
-                          <span className="text-xs px-2.5 py-1 bg-zinc-800 border border-zinc-700/60 rounded-md font-medium text-zinc-300">
+                          <span className="text-xs px-2.5 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md font-medium text-slate-700 dark:text-slate-300">
                             {loc.type}
                           </span>
                         </td>
                         <td className="py-4 px-6">
-                          <span className="text-xs text-zinc-300 font-medium">
+                          <span className="text-xs text-slate-700 dark:text-slate-300 font-medium">
                             {loc.stocks?.length || 0} product items
                           </span>
                         </td>
@@ -539,14 +534,14 @@ export default function WarehouseDetailPage() {
                             <div className="flex items-center justify-end gap-1.5">
                               <button
                                 onClick={() => handleOpenEditLocation(loc)}
-                                className="p-1.5 text-zinc-400 hover:text-blue-400 hover:bg-zinc-800 rounded-md transition-colors"
+                                className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
                                 title="Edit Location"
                               >
                                 <Edit2 className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteLocation(loc)}
-                                className="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-zinc-800 rounded-md transition-colors"
+                                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
                                 title="Deactivate / Delete Location"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -568,23 +563,23 @@ export default function WarehouseDetailPage() {
       {activeTab === "stock" && (
         <div className="space-y-4">
           {/* Stock Filters */}
-          <Card className="p-4 bg-zinc-900/60 border-zinc-800 flex flex-col md:flex-row gap-3 justify-between items-stretch md:items-center">
+          <Card className="p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-3 justify-between items-stretch md:items-center">
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search products by name, SKU..."
                 value={stockSearch}
                 onChange={(e) => setStockSearch(e.target.value)}
-                className="pl-9 bg-zinc-950/60 border-zinc-700/80 text-sm"
+                className="pl-9 text-sm"
               />
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-zinc-400">
+            <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
               <span>Filter Location:</span>
               <select
                 value={selectedStockLocation}
                 onChange={(e) => setSelectedStockLocation(e.target.value)}
-                className="bg-zinc-950/60 border border-zinc-700/80 rounded-lg px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 <option value="ALL">All Warehouse Locations</option>
                 {warehouse.locations?.map((loc) => (
@@ -597,28 +592,28 @@ export default function WarehouseDetailPage() {
           </Card>
 
           {/* Stock Table */}
-          <Card className="bg-zinc-900/60 border-zinc-800 overflow-hidden shadow-xl">
+          <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-zinc-300">
-                <thead className="bg-zinc-950/80 text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800">
+              <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                <thead className="bg-slate-50 dark:bg-slate-800/50 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                   <tr>
-                    <th className="py-4 px-6">Product</th>
-                    <th className="py-4 px-6">SKU</th>
-                    <th className="py-4 px-6">Location</th>
-                    <th className="py-4 px-6 text-right">On-Hand Quantity</th>
-                    <th className="py-4 px-6 text-right">UOM</th>
+                    <th className="py-3.5 px-6">Product</th>
+                    <th className="py-3.5 px-6">SKU</th>
+                    <th className="py-3.5 px-6">Location</th>
+                    <th className="py-3.5 px-6 text-right">On-Hand Quantity</th>
+                    <th className="py-3.5 px-6 text-right">UOM</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-800/60">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredStockItems.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="py-12 text-center text-zinc-400">
-                        <Package className="h-9 w-9 text-zinc-600 mx-auto mb-2" />
-                        <p className="text-zinc-300 font-medium text-sm">
+                      <td colSpan={5} className="py-12 text-center text-slate-500 dark:text-slate-400">
+                        <Package className="h-9 w-9 text-slate-400 mx-auto mb-2" />
+                        <p className="text-slate-900 dark:text-slate-100 font-medium text-sm">
                           No inventory records found at this location
                         </p>
-                        <p className="text-xs text-zinc-500 mt-1">
-                          Create products with initial stock or receive purchase shipments to populate location quantities.
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          Receive purchase shipments or execute transfers to populate location quantities.
                         </p>
                       </td>
                     </tr>
@@ -626,34 +621,34 @@ export default function WarehouseDetailPage() {
                     filteredStockItems.map((item) => (
                       <tr
                         key={item.id}
-                        className="hover:bg-zinc-800/40 transition-colors"
+                        className="hover:bg-slate-50/70 dark:hover:bg-slate-800/30 transition-colors"
                       >
-                        <td className="py-4 px-6 font-medium text-zinc-100">
+                        <td className="py-4 px-6 font-medium text-slate-900 dark:text-slate-100">
                           <Link
                             href={`/products/${item.id}`}
-                            className="hover:text-emerald-400 transition-colors"
+                            className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                           >
                             {item.productName}
                           </Link>
                         </td>
                         <td className="py-4 px-6">
-                          <span className="font-mono text-xs px-2 py-0.5 bg-zinc-800 border border-zinc-700 rounded text-zinc-300">
+                          <span className="font-mono text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-slate-700 dark:text-slate-300">
                             {item.sku}
                           </span>
                         </td>
                         <td className="py-4 px-6">
-                          <div className="flex items-center gap-1.5 text-zinc-200">
-                            <MapPin className="h-3.5 w-3.5 text-emerald-400" />
+                          <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
+                            <MapPin className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                             <span>{item.locationName}</span>
-                            <span className="text-xs text-zinc-400 font-mono">
+                            <span className="text-xs text-slate-400 font-mono">
                               ({item.locationCode})
                             </span>
                           </div>
                         </td>
-                        <td className="py-4 px-6 text-right font-bold text-emerald-400 text-base">
+                        <td className="py-4 px-6 text-right font-semibold text-slate-900 dark:text-slate-100 text-sm">
                           {item.quantity.toLocaleString()}
                         </td>
-                        <td className="py-4 px-6 text-right text-xs text-zinc-400 font-medium">
+                        <td className="py-4 px-6 text-right text-xs text-slate-500 dark:text-slate-400 font-medium">
                           {item.uom}
                         </td>
                       </tr>
@@ -665,13 +660,13 @@ export default function WarehouseDetailPage() {
 
             {/* Total On-Hand Footer */}
             {filteredStockItems.length > 0 && (
-              <div className="py-4 px-6 bg-zinc-950/80 border-t border-zinc-800 flex items-center justify-between text-sm">
-                <span className="text-zinc-400 font-medium">
+              <div className="py-3.5 px-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-sm">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">
                   Total Items Listed: {filteredStockItems.length}
                 </span>
-                <span className="text-zinc-200 font-semibold">
+                <span className="text-slate-700 dark:text-slate-300 font-medium">
                   Total On-Hand:{" "}
-                  <span className="text-emerald-400 font-bold text-base">
+                  <span className="text-slate-900 dark:text-slate-100 font-bold text-sm">
                     {filteredStockItems
                       .reduce((sum, item) => sum + item.quantity, 0)
                       .toLocaleString()}
@@ -686,66 +681,65 @@ export default function WarehouseDetailPage() {
 
       {/* Modal: Add / Edit Location */}
       {locationModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-              <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-emerald-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                 {editingLocation ? "Edit Storage Location" : "Add Location in " + warehouse.name}
               </h3>
               <button
                 onClick={() => setLocationModalOpen(false)}
-                className="text-zinc-400 hover:text-zinc-200 transition-colors"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
               >
                 ✕
               </button>
             </div>
 
             {locFormError && (
-              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-2 text-xs text-red-400">
-                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-lg flex items-start gap-2 text-xs text-rose-700 dark:text-rose-300">
+                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-rose-500" />
                 <span>{locFormError}</span>
               </div>
             )}
 
             <form onSubmit={handleLocationSubmit} className="space-y-4 text-sm">
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                  Location Name <span className="text-red-400">*</span>
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                  Location Name <span className="text-rose-500">*</span>
                 </label>
                 <Input
                   required
                   placeholder="e.g. Rack A, Shelf 1, Production Floor, Receiving Bay"
                   value={locName}
                   onChange={(e) => setLocName(e.target.value)}
-                  className="bg-zinc-950/60 border-zinc-700"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                  Location Code <span className="text-red-400">*</span>
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                  Location Code <span className="text-rose-500">*</span>
                 </label>
                 <Input
                   required
                   placeholder="e.g. RACK-A, SHELF-01, PROD-FLOOR"
                   value={locCode}
                   onChange={(e) => setLocCode(e.target.value.toUpperCase())}
-                  className="bg-zinc-950/60 border-zinc-700 font-mono uppercase"
+                  className="font-mono uppercase"
                 />
-                <p className="text-[11px] text-zinc-400 mt-1">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                   Unique code within this warehouse for bin tagging and transfers.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                  Zone Type <span className="text-red-400">*</span>
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                  Zone Type <span className="text-rose-500">*</span>
                 </label>
                 <select
                   value={locType}
                   onChange={(e) => setLocType(e.target.value)}
-                  className="w-full bg-zinc-950/60 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 >
                   {LOCATION_TYPES.map((type) => (
                     <option key={type} value={type}>
@@ -756,7 +750,7 @@ export default function WarehouseDetailPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                   Description / Dimensions / Notes
                 </label>
                 <textarea
@@ -764,7 +758,7 @@ export default function WarehouseDetailPage() {
                   placeholder="Weight capacity, dimensions, designated product categories..."
                   value={locDescription}
                   onChange={(e) => setLocDescription(e.target.value)}
-                  className="w-full bg-zinc-950/60 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 resize-none"
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none"
                 />
               </div>
 
@@ -775,9 +769,9 @@ export default function WarehouseDetailPage() {
                     id="loc-active"
                     checked={locIsActive}
                     onChange={(e) => setLocIsActive(e.target.checked)}
-                    className="rounded border-zinc-700 bg-zinc-950 text-emerald-500 focus:ring-emerald-500/30 h-4 w-4"
+                    className="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500/30 h-4 w-4"
                   />
-                  <label htmlFor="loc-active" className="text-xs text-zinc-300 font-medium">
+                  <label htmlFor="loc-active" className="text-xs text-slate-700 dark:text-slate-300 font-medium">
                     Active Location (Available for inventory operations)
                   </label>
                 </div>
@@ -788,28 +782,27 @@ export default function WarehouseDetailPage() {
                     id="loc-scrap"
                     checked={locIsScrap}
                     onChange={(e) => setLocIsScrap(e.target.checked)}
-                    className="rounded border-zinc-700 bg-zinc-950 text-red-500 focus:ring-red-500/30 h-4 w-4"
+                    className="rounded border-slate-300 dark:border-slate-700 text-rose-600 focus:ring-rose-500/30 h-4 w-4"
                   />
-                  <label htmlFor="loc-scrap" className="text-xs text-zinc-300 font-medium">
+                  <label htmlFor="loc-scrap" className="text-xs text-slate-700 dark:text-slate-300 font-medium">
                     Mark as Scrap / Inventory Loss Location
                   </label>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setLocationModalOpen(false)}
                   disabled={locFormLoading}
-                  className="border-zinc-700"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={locFormLoading}
-                  className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-semibold"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-sm"
                 >
                   {locFormLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                   {editingLocation ? "Save Changes" : "Create Location"}

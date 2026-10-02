@@ -5,16 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
-  ArrowDownToLine,
   Building2,
-  MapPin,
   Package,
   Plus,
   Trash2,
-  Calendar,
   AlertCircle,
   Loader2,
-  CheckCircle2,
   UserCheck,
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
@@ -343,7 +339,7 @@ export default function NewReceiptPage() {
       <div>
         <Link
           href="/operations/receipts"
-          className="inline-flex items-center text-xs font-medium text-zinc-400 hover:text-emerald-400 transition-colors"
+          className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Back to Receipts
         </Link>
@@ -356,11 +352,11 @@ export default function NewReceiptPage() {
       />
 
       {errorMessage && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3 text-sm text-red-400">
-          <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+        <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl flex items-start gap-3 text-sm text-rose-700 dark:text-rose-300">
+          <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-rose-500" />
           <div>
             <p className="font-semibold">Validation Error</p>
-            <p className="text-xs text-red-300 mt-0.5">{errorMessage}</p>
+            <p className="text-xs mt-0.5">{errorMessage}</p>
           </div>
         </div>
       )}
@@ -368,9 +364,9 @@ export default function NewReceiptPage() {
       {/* Main Form */}
       <div className="space-y-6">
         {/* Step 1: Shipment Header Details */}
-        <Card className="p-6 bg-zinc-900/60 border-zinc-800 space-y-5 shadow-xl">
-          <h3 className="text-base font-bold text-zinc-100 flex items-center gap-2 border-b border-zinc-800/80 pb-3">
-            <Building2 className="h-5 w-5 text-emerald-400" />
+        <Card className="p-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 space-y-5 shadow-sm">
+          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+            <Building2 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
             Vendor & Facility Details
           </h3>
 
@@ -378,8 +374,8 @@ export default function NewReceiptPage() {
             {/* Supplier Selector */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-zinc-300">
-                  Supplier / Vendor <span className="text-red-400">*</span>
+                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                  Supplier / Vendor <span className="text-rose-500">*</span>
                 </label>
                 <button
                   type="button"
@@ -392,7 +388,7 @@ export default function NewReceiptPage() {
                     setSupModalError(null);
                     setSupplierModalOpen(true);
                   }}
-                  className="text-xs text-emerald-400 hover:text-emerald-300 font-medium"
+                  className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
                 >
                   + Add New Supplier
                 </button>
@@ -403,7 +399,7 @@ export default function NewReceiptPage() {
                   <select
                     value={supplierId || "CUSTOM"}
                     onChange={handleSupplierSelect}
-                    className="w-full bg-zinc-950/60 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                   >
                     <option value="CUSTOM">-- Select from registered suppliers or type below --</option>
                     {suppliers.map((sup) => (
@@ -417,7 +413,6 @@ export default function NewReceiptPage() {
                     placeholder="Supplier Name"
                     value={supplierName}
                     onChange={(e) => setSupplierName(e.target.value)}
-                    className="bg-zinc-950/60 border-zinc-700"
                   />
                 </div>
               ) : (
@@ -426,20 +421,19 @@ export default function NewReceiptPage() {
                   placeholder="e.g. Apex Industrial Steel Corp"
                   value={supplierName}
                   onChange={(e) => setSupplierName(e.target.value)}
-                  className="bg-zinc-950/60 border-zinc-700"
                 />
               )}
             </div>
 
             {/* Destination Warehouse */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300">
-                Destination Warehouse Facility <span className="text-red-400">*</span>
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                Destination Warehouse Facility <span className="text-rose-500">*</span>
               </label>
               <select
                 value={warehouseId}
                 onChange={(e) => setWarehouseId(e.target.value)}
-                className="w-full bg-zinc-950/60 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 {warehouses.map((wh) => (
                   <option key={wh.id} value={wh.id}>
@@ -447,49 +441,83 @@ export default function NewReceiptPage() {
                   </option>
                 ))}
               </select>
-              <p className="text-[11px] text-zinc-400">
-                Line item storage locations are strictly scoped to this warehouse.
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                Target warehouse facility receiving the shipment.
+              </p>
+            </div>
+
+            {/* Destination Location */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                Default Destination Location <span className="text-rose-500">*</span>
+              </label>
+              <select
+                value={destinationLocationId}
+                onChange={(e) => {
+                  const newLocId = e.target.value;
+                  setDestinationLocationId(newLocId);
+                  setItems((prev) =>
+                    prev.map((item) => ({
+                      ...item,
+                      locationId: newLocId,
+                    }))
+                  );
+                }}
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              >
+                {warehouseLocations.length === 0 ? (
+                  <option value="">No locations configured</option>
+                ) : (
+                  warehouseLocations.map((loc) => (
+                    <option key={loc.id} value={loc.id}>
+                      {loc.name} ({loc.code})
+                    </option>
+                  ))
+                )}
+              </select>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                Putaway storage location for incoming inventory.
               </p>
             </div>
 
             {/* Scheduled Date */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
                 Expected / Delivery Date
               </label>
               <Input
                 type="date"
                 value={scheduledDate}
                 onChange={(e) => setScheduledDate(e.target.value)}
-                className="bg-zinc-950/60 border-zinc-700 text-sm"
+                className="text-sm"
               />
             </div>
 
             {/* Operational Notes */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
                 Vendor PO / Bill of Lading Notes
               </label>
               <Input
                 placeholder="e.g. PO-2026-9021, Delivery Bill #8812"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="bg-zinc-950/60 border-zinc-700 text-sm"
+                className="text-sm"
               />
             </div>
           </div>
         </Card>
 
         {/* Step 2: Line Items Builder */}
-        <Card className="p-6 bg-zinc-900/60 border-zinc-800 space-y-5 shadow-xl">
-          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+        <Card className="p-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 space-y-5 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div>
-              <h3 className="text-base font-bold text-zinc-100 flex items-center gap-2">
-                <Package className="h-5 w-5 text-emerald-400" />
+              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <Package className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                 Received Product Lines
               </h3>
-              <p className="text-xs text-zinc-400 mt-0.5">
-                Specify quantities and exact destination bin / rack for each item.
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Specify quantities and destination location for each item.
               </p>
             </div>
 
@@ -498,15 +526,15 @@ export default function NewReceiptPage() {
               variant="outline"
               size="sm"
               onClick={handleAddLine}
-              className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 text-xs"
+              className="text-xs"
             >
               <Plus className="h-3.5 w-3.5 mr-1" /> Add Product Line
             </Button>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="bg-zinc-950/80 text-xs font-semibold text-zinc-400 uppercase tracking-wider border-b border-zinc-800">
+            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
                 <tr>
                   <th className="py-3 px-4 min-w-[240px]">Product Item</th>
                   <th className="py-3 px-4 min-w-[180px]">Destination Location</th>
@@ -515,15 +543,15 @@ export default function NewReceiptPage() {
                   <th className="py-3 px-4 w-12 text-center"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/60">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {items.map((item, index) => (
-                  <tr key={item.id} className="hover:bg-zinc-800/30 transition-colors">
+                  <tr key={item.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/30 transition-colors">
                     {/* Product Select */}
                     <td className="py-3 px-4">
                       <select
                         value={item.productId}
                         onChange={(e) => handleItemChange(index, "productId", e.target.value)}
-                        className="w-full bg-zinc-950/80 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                       >
                         <option value="">-- Choose Product --</option>
                         {products.map((p) => (
@@ -539,7 +567,7 @@ export default function NewReceiptPage() {
                       <select
                         value={item.locationId}
                         onChange={(e) => handleItemChange(index, "locationId", e.target.value)}
-                        className="w-full bg-zinc-950/80 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-zinc-200 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                       >
                         <option value="">-- Choose Location --</option>
                         {warehouseLocations.map((loc) => (
@@ -560,13 +588,13 @@ export default function NewReceiptPage() {
                         onChange={(e) =>
                           handleItemChange(index, "quantityReceived", e.target.value)
                         }
-                        className="bg-zinc-950/80 border-zinc-700 text-right text-xs py-1.5 h-8 font-semibold text-emerald-400"
+                        className="text-right text-xs py-1.5 h-8 font-semibold text-slate-900 dark:text-slate-100"
                       />
                     </td>
 
                     {/* UOM */}
                     <td className="py-3 px-4 text-center">
-                      <span className="font-mono text-xs px-2 py-1 bg-zinc-800 border border-zinc-700/60 rounded text-zinc-300">
+                      <span className="font-mono text-xs px-2 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-slate-700 dark:text-slate-300">
                         {item.uom}
                       </span>
                     </td>
@@ -577,7 +605,7 @@ export default function NewReceiptPage() {
                         type="button"
                         onClick={() => handleRemoveLine(index)}
                         disabled={items.length <= 1}
-                        className="text-zinc-500 hover:text-red-400 disabled:opacity-30 transition-colors p-1"
+                        className="text-slate-400 hover:text-rose-500 disabled:opacity-30 transition-colors p-1"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -589,11 +617,11 @@ export default function NewReceiptPage() {
           </div>
 
           {/* Lines Summary Bar */}
-          <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Total Lines: {items.length}</span>
-            <span className="text-zinc-200 font-medium">
+            <span className="text-slate-700 dark:text-slate-300 font-medium">
               Total Units to Receive:{" "}
-              <span className="text-emerald-400 font-bold text-sm">
+              <span className="text-slate-900 dark:text-slate-100 font-bold text-sm">
                 {totalUnits.toLocaleString()}
               </span>
             </span>
@@ -603,7 +631,7 @@ export default function NewReceiptPage() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
           <Link href="/operations/receipts">
-            <Button variant="outline" className="border-zinc-700 text-sm">
+            <Button variant="outline" className="text-sm">
               Cancel
             </Button>
           </Link>
@@ -613,7 +641,7 @@ export default function NewReceiptPage() {
             variant="outline"
             disabled={submitLoading}
             onClick={() => handleSubmitReceipt(false)}
-            className="border-zinc-700 text-zinc-200 hover:bg-zinc-800 text-sm"
+            className="text-sm"
           >
             {submitLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
             Save as Draft
@@ -623,7 +651,7 @@ export default function NewReceiptPage() {
             type="button"
             disabled={submitLoading}
             onClick={() => handleSubmitReceipt(true)}
-            className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-semibold shadow-lg shadow-emerald-500/20 text-sm"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-sm text-sm"
           >
             {submitLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
             Submit & Mark Ready
@@ -633,56 +661,56 @@ export default function NewReceiptPage() {
 
       {/* Modal: Quick Add Supplier */}
       {supplierModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-              <h3 className="text-base font-bold text-zinc-100 flex items-center gap-2">
-                <UserCheck className="h-5 w-5 text-emerald-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <UserCheck className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                 Register New Supplier
               </h3>
               <button
                 onClick={() => setSupplierModalOpen(false)}
-                className="text-zinc-400 hover:text-zinc-200"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
               >
                 ✕
               </button>
             </div>
 
             {supModalError && (
-              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-400">
+              <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-lg text-xs text-rose-700 dark:text-rose-300">
                 {supModalError}
               </div>
             )}
 
             <form onSubmit={handleCreateSupplier} className="space-y-3.5 text-sm">
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">
-                  Supplier Name <span className="text-red-400">*</span>
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Supplier Name <span className="text-rose-500">*</span>
                 </label>
                 <Input
                   required
                   placeholder="e.g. Apex Industrial Steel Corp"
                   value={newSupName}
                   onChange={(e) => setNewSupName(e.target.value)}
-                  className="bg-zinc-950/60 border-zinc-700 text-xs"
+                  className="text-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Supplier Code
                 </label>
                 <Input
                   placeholder="e.g. SUP-APEX-01"
                   value={newSupCode}
                   onChange={(e) => setNewSupCode(e.target.value.toUpperCase())}
-                  className="bg-zinc-950/60 border-zinc-700 text-xs uppercase font-mono"
+                  className="text-xs uppercase font-mono"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Email Address
                   </label>
                   <Input
@@ -690,42 +718,42 @@ export default function NewReceiptPage() {
                     placeholder="sales@apex.com"
                     value={newSupEmail}
                     onChange={(e) => setNewSupEmail(e.target.value)}
-                    className="bg-zinc-950/60 border-zinc-700 text-xs"
+                    className="text-xs"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
                     Phone Number
                   </label>
                   <Input
                     placeholder="+1 800-555-0199"
                     value={newSupPhone}
                     onChange={(e) => setNewSupPhone(e.target.value)}
-                    className="bg-zinc-950/60 border-zinc-700 text-xs"
+                    className="text-xs"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Address
                 </label>
                 <Input
                   placeholder="City, State / Physical address"
                   value={newSupAddress}
                   onChange={(e) => setNewSupAddress(e.target.value)}
-                  className="bg-zinc-950/60 border-zinc-700 text-xs"
+                  className="text-xs"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setSupplierModalOpen(false)}
                   disabled={supModalLoading}
-                  className="border-zinc-700 text-xs"
+                  className="text-xs"
                 >
                   Cancel
                 </Button>
@@ -733,7 +761,7 @@ export default function NewReceiptPage() {
                   type="submit"
                   size="sm"
                   disabled={supModalLoading}
-                  className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-semibold text-xs"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs"
                 >
                   {supModalLoading && <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />}
                   Save Supplier

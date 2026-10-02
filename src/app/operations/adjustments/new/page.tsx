@@ -17,6 +17,7 @@ import {
   TrendingDown,
   Info,
 } from "lucide-react";
+import { PageHeader } from "@/components/shared/page-header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -166,7 +167,6 @@ export default function NewAdjustmentPage() {
                 ? {
                     ...item,
                     theoreticalQty: stockQty,
-                    // If countedQty was uninitialized (0 with new item), set initial countedQty to theoreticalQty
                     countedQty: item.countedQty === "" ? 0 : item.countedQty,
                     loadingStock: false,
                   }
@@ -311,8 +311,8 @@ export default function NewAdjustmentPage() {
   if (loadingInitial) {
     return (
       <div className="py-24 flex flex-col items-center justify-center space-y-3">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
-        <p className="text-sm text-zinc-400">Loading adjustment form configuration...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600 dark:text-indigo-400" />
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading adjustment form configuration...</p>
       </div>
     );
   }
@@ -320,33 +320,25 @@ export default function NewAdjustmentPage() {
   return (
     <div className="space-y-6 pb-16 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <Link href="/operations/adjustments">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 w-9 p-0 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+      <div>
+        <Link
+          href="/operations/adjustments"
+          className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors mb-3"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Back to Adjustments
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-            <SlidersHorizontal className="h-6 w-6 text-purple-400" />
-            New Inventory Adjustment
-          </h1>
-          <p className="text-sm text-zinc-400">
-            Record physical stock counts and calculate differences against current system quantities.
-          </p>
-        </div>
+        <PageHeader
+          title="New Inventory Adjustment"
+          description="Record physical stock counts and calculate differences against current system quantities."
+        />
       </div>
 
       {/* Info Callout */}
-      <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-200 flex items-start gap-3">
-        <Info className="h-4 w-4 shrink-0 text-purple-400 mt-0.5" />
+      <div className="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 text-xs text-indigo-900 dark:text-indigo-200 flex items-start gap-3">
+        <Info className="h-4 w-4 shrink-0 text-indigo-600 dark:text-indigo-400 mt-0.5" />
         <div className="space-y-1">
-          <p className="font-semibold text-purple-300">Authoritative Physical Count Rule:</p>
-          <p className="text-purple-200/90 leading-relaxed">
+          <p className="font-semibold text-indigo-950 dark:text-indigo-300">Authoritative Physical Count Rule:</p>
+          <p className="text-indigo-800 dark:text-indigo-200/90 leading-relaxed">
             Upon validation, the <strong>Physical Counted Quantity</strong> will become the authoritative new stock balance in the database. Any discrepancy will be automatically logged to the Stock Ledger as a signed movement.
           </p>
         </div>
@@ -354,34 +346,34 @@ export default function NewAdjustmentPage() {
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-sm flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-rose-500" />
           <div className="flex-1">
             <p className="font-semibold">Unable to create adjustment</p>
-            <p className="mt-0.5 text-xs text-red-300/90">{errorMessage}</p>
+            <p className="mt-0.5 text-xs">{errorMessage}</p>
           </div>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Warehouse, Location & Reason Card */}
-        <Card className="p-5 bg-zinc-900/60 border-zinc-800/80 space-y-4">
-          <h2 className="text-sm font-semibold text-zinc-100 flex items-center gap-2 border-b border-zinc-800/80 pb-2.5">
-            <Building2 className="h-4 w-4 text-purple-400" />
+        <Card className="p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+            <Building2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
             Warehouse & Location Selection
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Warehouse Select */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-                Warehouse <span className="text-red-400">*</span>
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                Warehouse <span className="text-rose-500">*</span>
               </label>
               <select
                 value={warehouseId}
                 onChange={(e) => setWarehouseId(e.target.value)}
                 required
-                className="w-full h-9 rounded-lg px-3 bg-zinc-950/60 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full h-9 rounded-lg px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 {warehouses.map((wh) => (
                   <option key={wh.id} value={wh.id}>
@@ -393,15 +385,15 @@ export default function NewAdjustmentPage() {
 
             {/* Location Select */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5 text-purple-400" />
-                Physical Location / Bin <span className="text-red-400">*</span>
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                <MapPin className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                Physical Location / Bin <span className="text-rose-500">*</span>
               </label>
               <select
                 value={locationId}
                 onChange={(e) => setLocationId(e.target.value)}
                 required
-                className="w-full h-9 rounded-lg px-3 bg-zinc-950/60 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full h-9 rounded-lg px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
                 {locations.map((loc) => (
                   <option key={loc.id} value={loc.id}>
@@ -414,27 +406,26 @@ export default function NewAdjustmentPage() {
 
           {/* Reason / Notes */}
           <div className="space-y-1.5 pt-2">
-            <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+            <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
               Discrepancy Reason / Notes (Optional)
             </label>
             <Input
               placeholder="e.g. Periodic cycle count, physical audit, damage scrap, shrinkage write-off"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="bg-zinc-950/60 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:border-purple-500"
             />
           </div>
         </Card>
 
         {/* Line Items Table */}
-        <Card className="p-5 bg-zinc-900/60 border-zinc-800/80 space-y-4">
-          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+        <Card className="p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div>
-              <h2 className="text-base font-semibold text-zinc-100 flex items-center gap-2">
-                <Package className="h-4 w-4 text-purple-400" />
+              <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <Package className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                 Product Counts & Differences
               </h2>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Enter physical counted quantities. The server computes the difference against live system stock.
               </p>
             </div>
@@ -443,7 +434,7 @@ export default function NewAdjustmentPage() {
               variant="outline"
               size="sm"
               onClick={handleAddLine}
-              className="border-zinc-700 bg-zinc-800/60 hover:bg-zinc-750 text-zinc-200 text-xs"
+              className="text-xs"
             >
               <Plus className="h-3.5 w-3.5 mr-1" />
               Add Product
@@ -458,24 +449,24 @@ export default function NewAdjustmentPage() {
               return (
                 <div
                   key={item.id}
-                  className="p-4 rounded-xl border bg-zinc-950/40 border-zinc-800/80 hover:border-zinc-700 transition-all space-y-3"
+                  className="p-4 rounded-xl border bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/70 dark:border-slate-800 space-y-3"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
                     {/* Line Index */}
-                    <div className="hidden md:flex md:col-span-1 items-center justify-center text-zinc-500 font-mono text-xs font-semibold">
+                    <div className="hidden md:flex md:col-span-1 items-center justify-center text-slate-400 font-mono text-xs font-semibold">
                       #{index + 1}
                     </div>
 
                     {/* Product Select */}
                     <div className="md:col-span-5 space-y-1">
-                      <label className="text-[11px] font-semibold text-zinc-400 uppercase">
-                        Product <span className="text-red-400">*</span>
+                      <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase">
+                        Product <span className="text-rose-500">*</span>
                       </label>
                       <select
                         value={item.productId}
                         onChange={(e) => handleProductChange(index, e.target.value)}
                         required
-                        className="w-full h-9 rounded-lg px-3 bg-zinc-900 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-purple-500"
+                        className="w-full h-9 rounded-lg px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                       >
                         <option value="">Select Product...</option>
                         {products.map((prod) => (
@@ -488,24 +479,24 @@ export default function NewAdjustmentPage() {
 
                     {/* System Stock (Read-Only) */}
                     <div className="md:col-span-2 space-y-1">
-                      <label className="text-[11px] font-semibold text-zinc-400 uppercase">
+                      <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase">
                         System Stock
                       </label>
-                      <div className="h-9 px-3 bg-zinc-900/80 border border-zinc-800/80 rounded-lg flex items-center justify-between font-mono text-sm text-zinc-300">
+                      <div className="h-9 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-between font-mono text-sm text-slate-700 dark:text-slate-300">
                         {item.loadingStock ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin text-purple-400" />
+                          <Loader2 className="h-3.5 w-3.5 animate-spin text-indigo-500" />
                         ) : (
                           <span>{item.theoreticalQty}</span>
                         )}
-                        <span className="text-xs text-zinc-500">{item.uom}</span>
+                        <span className="text-xs text-slate-400">{item.uom}</span>
                       </div>
                     </div>
 
                     {/* Physical Counted Input */}
                     <div className="md:col-span-3 space-y-1">
-                      <label className="text-[11px] font-semibold text-zinc-400 uppercase flex items-center justify-between">
+                      <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase flex items-center justify-between">
                         <span>Counted Stock</span>
-                        <span className="text-zinc-500 font-normal">({item.uom})</span>
+                        <span className="text-slate-400 font-normal">({item.uom})</span>
                       </label>
                       <div className="flex items-center gap-2">
                         <Input
@@ -526,7 +517,7 @@ export default function NewAdjustmentPage() {
                               )
                             );
                           }}
-                          className="bg-zinc-900 border-zinc-800 text-zinc-100 focus:border-purple-500 h-9 text-sm font-mono font-bold"
+                          className="h-9 text-sm font-mono font-bold"
                           required
                         />
                       </div>
@@ -540,7 +531,7 @@ export default function NewAdjustmentPage() {
                         size="sm"
                         disabled={items.length <= 1}
                         onClick={() => handleRemoveLine(index)}
-                        className="h-9 w-9 p-0 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 disabled:opacity-30"
+                        className="h-9 w-9 p-0 text-slate-400 hover:text-rose-500 disabled:opacity-30"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -549,26 +540,26 @@ export default function NewAdjustmentPage() {
 
                   {/* Live Difference Badge */}
                   {item.productId && (
-                    <div className="pt-2 border-t border-zinc-800/60 flex items-center justify-between text-xs">
+                    <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs">
                       <div className="flex items-center gap-4">
-                        <span className="text-zinc-400">
-                          System: <strong className="text-zinc-200 font-mono">{item.theoreticalQty}</strong>
+                        <span className="text-slate-500 dark:text-slate-400">
+                          System: <strong className="text-slate-700 dark:text-slate-200 font-mono">{item.theoreticalQty}</strong>
                         </span>
-                        <span className="text-zinc-400">➔</span>
-                        <span className="text-zinc-400">
-                          Counted: <strong className="text-zinc-200 font-mono">{countVal}</strong>
+                        <span className="text-slate-400">➔</span>
+                        <span className="text-slate-500 dark:text-slate-400">
+                          Counted: <strong className="text-slate-700 dark:text-slate-200 font-mono">{countVal}</strong>
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="text-zinc-400">Difference:</span>
+                        <span className="text-slate-500 dark:text-slate-400">Difference:</span>
                         <span
-                          className={`font-mono font-bold px-2 py-0.5 rounded text-xs flex items-center gap-1 ${
+                          className={`font-mono font-semibold px-2 py-0.5 rounded text-xs flex items-center gap-1 ${
                             diff > 0
-                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                              ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60"
                               : diff < 0
-                              ? "bg-red-500/10 text-red-400 border border-red-500/20"
-                              : "bg-zinc-800 text-zinc-400"
+                              ? "bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-500"
                           }`}
                         >
                           {diff > 0 ? (
@@ -600,7 +591,6 @@ export default function NewAdjustmentPage() {
             <Button
               type="button"
               variant="outline"
-              className="border-zinc-700 bg-zinc-850 hover:bg-zinc-800 text-zinc-300"
             >
               Cancel
             </Button>
@@ -608,7 +598,7 @@ export default function NewAdjustmentPage() {
           <Button
             type="submit"
             disabled={submitting}
-            className="bg-purple-600 hover:bg-purple-500 text-white font-medium min-w-[160px] shadow-lg shadow-purple-500/20"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium min-w-[160px] shadow-sm"
           >
             {submitting ? (
               <>

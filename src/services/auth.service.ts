@@ -8,6 +8,11 @@ import {
   ResetPasswordInput,
   UpdateProfileInput,
   ChangePasswordInput,
+  signupSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  verifyOtpSchema,
+  resetPasswordSchema,
 } from "@/lib/validations/auth";
 import {
   hashPassword,
@@ -17,6 +22,11 @@ import {
   verifyOTP,
 } from "@/lib/auth/password";
 import { createSessionToken, SessionPayload } from "@/lib/auth/session";
+import {
+  createPasswordResetToken,
+  verifyPasswordResetToken,
+} from "@/lib/auth/reset-token";
+import { sendPasswordResetOtpEmail } from "@/lib/email/resend";
 import {
   UnauthorizedError,
   ConflictError,
@@ -29,6 +39,7 @@ export class AuthService {
    * Registers a new user account and creates a session token.
    */
   async signup(input: SignupInput) {
+    signupSchema.parse(input);
     const existingUser = await userRepository.findByEmail(input.email);
     if (existingUser) {
       throw new ConflictError("An account with this email address already exists.");
@@ -68,6 +79,7 @@ export class AuthService {
    * Authenticates user credentials and generates a session token.
    */
   async login(input: LoginInput) {
+    loginSchema.parse(input);
     const user = await userRepository.findByEmail(input.email);
     if (!user || !user.isActive) {
       throw new UnauthorizedError("Invalid email or password.");
@@ -104,9 +116,10 @@ export class AuthService {
   }
 
   /**
-   * Generates a 6-digit OTP for password reset and logs it in development mode.
+   * Generates a 6-digit OTP for password reset and dispatches it via Resend email.
    */
   async requestPasswordReset(input: ForgotPasswordInput) {
+    forgotPasswordSchema.parse(input);
     const user = await userRepository.findByEmail(input.email);
 
     // Generic safe response to prevent email enumeration
@@ -114,35 +127,60 @@ export class AuthService {
       return {
         success: true,
         message:
-          "If an account with this email exists, a 6-digit verification code has been dispatched.",
+          "If an account exists for this email, a verification code has been sent.",
       };
+    }
+
+    // Enforce 60-second cooldown on resending to prevent spam
+    const recentOtp = await otpRepository.findRecentOTP(user.id, 60);
+    if (recentOtp) {
+      throw new ValidationError(
+        "Please wait 60 seconds before requesting another verification code."
+      );
     }
 
     const otp = generateOTP(6);
     const otpHash = await hashOTP(otp);
 
-    // Store in DB with 10-minute validity
+    // Store in DB with 10-minute validity and 5 max attempts
     await otpRepository.createOTP(user.id, otpHash, 10);
 
-    // Development-safe inspection logger
-    console.log("====================================================");
-    console.log(`[StockSense Auth] OTP Generated for ${user.email}: ${otp}`);
-    console.log("Valid for 10 minutes (Max 3 attempts)");
-    console.log("====================================================");
+    console.log(`Password reset OTP generated for ${user.email}`);
+
+    // Send email using Resend
+    let devOtp: string | undefined =
+      process.env.NODE_ENV !== "production" ? otp : undefined;
+
+    try {
+      const res = await sendPasswordResetOtpEmail({
+        to: user.email,
+        otp,
+      });
+      if (res.devOtp) {
+        devOtp = res.devOtp;
+      }
+    } catch (err: any) {
+      console.error("Email dispatch failed:", err);
+      if (process.env.NODE_ENV === "production") {
+        throw new ValidationError(
+          "Unable to send verification code. Please check email configuration or try again later."
+        );
+      }
+    }
 
     return {
       success: true,
       message:
-        "If an account with this email exists, a 6-digit verification code has been dispatched.",
-      // Include devOtp in non-production for frictionless testing in Hackathon evaluation
-      devOtp: process.env.NODE_ENV !== "production" ? otp : undefined,
+        "If an account exists for this email, a verification code has been sent.",
+      ...(devOtp ? { devOtp } : {}),
     };
   }
 
   /**
-   * Verifies an OTP without resetting password yet.
+   * Verifies an OTP and issues a cryptographically signed reset token.
    */
   async verifyOtp(input: VerifyOtpInput) {
+    verifyOtpSchema.parse(input);
     const user = await userRepository.findByEmail(input.email);
     if (!user) {
       throw new ValidationError("Invalid or expired verification code.");
@@ -151,68 +189,109 @@ export class AuthService {
     const activeOtp = await otpRepository.findLatestActiveOTP(user.id);
     if (!activeOtp) {
       throw new ValidationError(
-        "Verification code has expired or does not exist. Please request a new code."
+        "This verification code has expired. Please request a new code."
       );
     }
 
     if (activeOtp.attempts >= activeOtp.maxAttempts) {
+      await otpRepository.markAsUsed(activeOtp.id);
       throw new ValidationError(
-        "Maximum verification attempts exceeded. Please request a new code."
+        "Too many incorrect attempts. Please request a new code."
       );
     }
 
     const isMatch = await verifyOTP(input.otp, activeOtp.otpHash);
     if (!isMatch) {
-      await otpRepository.incrementAttempts(activeOtp.id);
-      const remaining = activeOtp.maxAttempts - (activeOtp.attempts + 1);
+      const updatedOtp = await otpRepository.incrementAttempts(activeOtp.id);
+      if (updatedOtp.attempts >= updatedOtp.maxAttempts) {
+        await otpRepository.markAsUsed(activeOtp.id);
+        throw new ValidationError(
+          "Too many incorrect attempts. Please request a new code."
+        );
+      }
+      const remaining = updatedOtp.maxAttempts - updatedOtp.attempts;
       throw new ValidationError(
         `Invalid verification code. ${remaining} attempt(s) remaining.`
       );
     }
 
+    // Generate signed reset authorization token valid for 10 minutes
+    const resetToken = await createPasswordResetToken({
+      userId: user.id,
+      email: user.email,
+      otpId: activeOtp.id,
+    });
+
     return {
+      success: true,
       valid: true,
+      resetToken,
       message: "Verification code confirmed.",
     };
   }
 
   /**
-   * Resets password after verifying the OTP.
+   * Resets password using verified reset token or valid OTP.
    */
   async resetPassword(input: ResetPasswordInput) {
-    const user = await userRepository.findByEmail(input.email);
-    if (!user) {
-      throw new ValidationError("Invalid or expired verification code.");
-    }
+    resetPasswordSchema.parse(input);
 
-    const activeOtp = await otpRepository.findLatestActiveOTP(user.id);
-    if (!activeOtp) {
-      throw new ValidationError(
-        "Verification code has expired or does not exist. Please request a new code."
-      );
-    }
+    let targetUserId: string;
+    let targetOtpId: string | null = null;
 
-    if (activeOtp.attempts >= activeOtp.maxAttempts) {
-      throw new ValidationError(
-        "Maximum verification attempts exceeded. Please request a new code."
-      );
-    }
+    if (input.resetToken) {
+      const tokenPayload = await verifyPasswordResetToken(input.resetToken);
+      if (!tokenPayload) {
+        throw new ValidationError(
+          "Password reset session has expired or is invalid. Please request a new code."
+        );
+      }
+      targetUserId = tokenPayload.userId;
+      targetOtpId = tokenPayload.otpId;
 
-    const isMatch = await verifyOTP(input.otp, activeOtp.otpHash);
-    if (!isMatch) {
-      await otpRepository.incrementAttempts(activeOtp.id);
-      const remaining = activeOtp.maxAttempts - (activeOtp.attempts + 1);
-      throw new ValidationError(
-        `Invalid verification code. ${remaining} attempt(s) remaining.`
-      );
+      // Verify OTP has not already been used
+      const otpRecord = await otpRepository.findById(targetOtpId);
+      if (!otpRecord || otpRecord.usedAt !== null) {
+        throw new ValidationError(
+          "This verification code has already been used. Please request a new code."
+        );
+      }
+    } else if (input.email && input.otp) {
+      const user = await userRepository.findByEmail(input.email);
+      if (!user) {
+        throw new ValidationError("Invalid or expired verification code.");
+      }
+      const activeOtp = await otpRepository.findLatestActiveOTP(user.id);
+      if (!activeOtp) {
+        throw new ValidationError(
+          "This verification code has expired. Please request a new code."
+        );
+      }
+      if (activeOtp.attempts >= activeOtp.maxAttempts) {
+        await otpRepository.markAsUsed(activeOtp.id);
+        throw new ValidationError(
+          "Too many incorrect attempts. Please request a new code."
+        );
+      }
+      const isMatch = await verifyOTP(input.otp, activeOtp.otpHash);
+      if (!isMatch) {
+        await otpRepository.incrementAttempts(activeOtp.id);
+        throw new ValidationError("Invalid verification code.");
+      }
+      targetUserId = user.id;
+      targetOtpId = activeOtp.id;
+    } else {
+      throw new ValidationError("Reset authorization token is required.");
     }
 
     // Hash new password and update user
     const newPasswordHash = await hashPassword(input.newPassword);
-    await userRepository.updatePassword(user.id, newPasswordHash);
+    await userRepository.updatePassword(targetUserId, newPasswordHash);
 
     // Invalidate the used OTP
-    await otpRepository.markAsUsed(activeOtp.id);
+    if (targetOtpId) {
+      await otpRepository.markAsUsed(targetOtpId);
+    }
 
     return {
       success: true,

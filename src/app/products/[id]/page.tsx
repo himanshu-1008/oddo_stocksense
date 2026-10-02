@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/shared/status-badge";
 import {
   Package,
   ArrowLeft,
@@ -267,61 +268,46 @@ export default function ProductDetailPage() {
 
       {/* Top Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
+        <Card className="border-slate-200/80 dark:border-slate-800 shadow-xs bg-white dark:bg-slate-900">
           <CardContent className="p-5">
-            <p className="text-xs font-medium text-slate-500">Total On-Hand Stock</p>
+            <p className="text-xs font-medium text-slate-500">Current Stock</p>
             <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-              {formatNumber(totalStock)} <span className="text-sm font-normal text-slate-500">{product.uom}</span>
+              {formatNumber(totalStock)} <span className="text-xs font-normal text-slate-500">{product.uom}</span>
             </p>
-            <p className="text-[11px] text-slate-400 mt-0.5">Across all locations</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Across all storage locations</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
+        <Card className="border-slate-200/80 dark:border-slate-800 shadow-xs bg-white dark:bg-slate-900">
           <CardContent className="p-5">
-            <p className="text-xs font-medium text-slate-500">Minimum Stock Rule</p>
+            <p className="text-xs font-medium text-slate-500">Minimum Stock</p>
             <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">
-              {formatNumber(minStock)} <span className="text-sm font-normal text-slate-500">{product.uom}</span>
+              {formatNumber(minStock)} <span className="text-xs font-normal text-slate-500">{product.uom}</span>
             </p>
-            <p className="text-[11px] text-slate-400 mt-0.5">Reorder trigger threshold</p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Safety threshold / reorder rule</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
+        <Card className="border-slate-200/80 dark:border-slate-800 shadow-xs bg-white dark:bg-slate-900">
           <CardContent className="p-5">
-            <p className="text-xs font-medium text-slate-500">Inventory Status</p>
-            <div className="mt-2">
-              {isOutOfStock ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20">
-                  <span className="w-2 h-2 rounded-full bg-red-500" />
-                  OUT OF STOCK
-                </span>
-              ) : isLowStock ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                  <span className="w-2 h-2 rounded-full bg-amber-500" />
-                  LOW STOCK
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  IN STOCK
-                </span>
-              )}
+            <p className="text-xs font-medium text-slate-500">Stock Status</p>
+            <div className="mt-2.5">
+              <StatusBadge status={isOutOfStock ? "OUT_OF_STOCK" : isLowStock ? "LOW_STOCK" : "IN_STOCK"} />
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">
+            <p className="text-[11px] text-slate-400 mt-1.5">
               {isOutOfStock
-                ? "No stock available"
+                ? "0 units on-hand"
                 : isLowStock
-                ? "Below threshold"
-                : "Healthy inventory"}
+                ? "Below minimum threshold"
+                : "Healthy inventory balance"}
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
+        <Card className="border-slate-200/80 dark:border-slate-800 shadow-xs bg-white dark:bg-slate-900">
           <CardContent className="p-5">
             <p className="text-xs font-medium text-slate-500">Catalog Status</p>
-            <div className="mt-2">
+            <div className="mt-2.5">
               <Badge
                 variant={product.isActive ? "success" : "secondary"}
                 className="text-xs px-2.5 py-0.5"
@@ -330,7 +316,7 @@ export default function ProductDetailPage() {
                 {product.isActive ? "Active Product" : "Deactivated"}
               </Badge>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">
+            <p className="text-[11px] text-slate-400 mt-1.5">
               {product.isActive ? "Available for operations" : "Excluded from operations"}
             </p>
           </CardContent>

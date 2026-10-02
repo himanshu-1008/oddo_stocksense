@@ -6,14 +6,13 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/shared/status-badge";
 import {
   Package,
   AlertTriangle,
   PackageX,
   Search,
   Filter,
-  ArrowRight,
   Eye,
   Plus,
   Loader2,
@@ -358,17 +357,7 @@ export default function LowStockPage() {
                           {shortage > 0 ? `-${formatNumber(shortage)} ${p.uom}` : "0"}
                         </td>
                         <td className="px-4 py-3.5">
-                          {p.stockStatus === "OUT_OF_STOCK" ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                              🔴 OUT OF STOCK
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                              🟡 LOW STOCK — Reorder recommended
-                            </span>
-                          )}
+                          <StatusBadge status={p.stockStatus} />
                         </td>
                         <td className="px-6 py-3.5 text-right space-x-1">
                           <Button

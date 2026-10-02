@@ -10,11 +10,9 @@ import {
   Package,
   Building2,
   MapPin,
-  Calendar,
   AlertCircle,
   Loader2,
   Shuffle,
-  ArrowRight,
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card } from "@/components/ui/card";
@@ -344,8 +342,8 @@ export default function NewTransferPage() {
   if (loadingInitial) {
     return (
       <div className="py-24 flex flex-col items-center justify-center space-y-3">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-        <p className="text-sm text-zinc-400">Loading transfer configuration...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600 dark:text-indigo-400" />
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading transfer configuration...</p>
       </div>
     );
   }
@@ -353,34 +351,26 @@ export default function NewTransferPage() {
   return (
     <div className="space-y-6 pb-16 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <Link href="/operations/transfers">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 w-9 p-0 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+      <div>
+        <Link
+          href="/operations/transfers"
+          className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors mb-3"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 mr-1.5" /> Back to Transfers
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-            <Shuffle className="h-6 w-6 text-emerald-400" />
-            New Internal Stock Transfer
-          </h1>
-          <p className="text-sm text-zinc-400">
-            Relocate inventory between locations while keeping overall stock in balance.
-          </p>
-        </div>
+        <PageHeader
+          title="New Internal Stock Transfer"
+          description="Relocate inventory between locations while keeping overall stock in balance."
+        />
       </div>
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-sm flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-rose-500" />
           <div className="flex-1">
             <p className="font-semibold">Unable to create transfer</p>
-            <p className="mt-0.5 text-xs text-red-300/90">{errorMessage}</p>
+            <p className="mt-0.5 text-xs">{errorMessage}</p>
           </div>
         </div>
       )}
@@ -389,22 +379,22 @@ export default function NewTransferPage() {
         {/* Source & Destination Locations */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Source Card */}
-          <Card className="p-5 bg-zinc-900/60 border-zinc-800/80 space-y-4">
-            <h2 className="text-sm font-semibold text-zinc-100 flex items-center gap-2 border-b border-zinc-800/80 pb-2.5">
-              <MapPin className="h-4 w-4 text-amber-400" />
-              Source (From)
+          <Card className="p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+              <MapPin className="h-4 w-4 text-amber-500" />
+              Source Location (From)
             </h2>
 
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <Building2 className="h-3.5 w-3.5 text-zinc-400" />
+                <label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <Building2 className="h-3.5 w-3.5 text-slate-400" />
                   Source Warehouse
                 </label>
                 <select
                   value={sourceWarehouseId}
                   onChange={(e) => setSourceWarehouseId(e.target.value)}
-                  className="w-full h-9 rounded-lg px-3 bg-zinc-950/60 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="w-full h-9 rounded-lg px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 >
                   {warehouses.map((wh) => (
                     <option key={wh.id} value={wh.id}>
@@ -415,14 +405,14 @@ export default function NewTransferPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-                  Source Location <span className="text-red-400">*</span>
+                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                  Source Location <span className="text-rose-500">*</span>
                 </label>
                 <select
                   value={sourceLocationId}
                   onChange={(e) => setSourceLocationId(e.target.value)}
                   required
-                  className="w-full h-9 rounded-lg px-3 bg-zinc-950/60 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="w-full h-9 rounded-lg px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 >
                   {sourceLocations.map((loc) => (
                     <option key={loc.id} value={loc.id}>
@@ -435,22 +425,22 @@ export default function NewTransferPage() {
           </Card>
 
           {/* Destination Card */}
-          <Card className="p-5 bg-zinc-900/60 border-zinc-800/80 space-y-4">
-            <h2 className="text-sm font-semibold text-zinc-100 flex items-center gap-2 border-b border-zinc-800/80 pb-2.5">
-              <MapPin className="h-4 w-4 text-emerald-400" />
-              Destination (To)
+          <Card className="p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+              <MapPin className="h-4 w-4 text-emerald-500" />
+              Destination Location (To)
             </h2>
 
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <Building2 className="h-3.5 w-3.5 text-zinc-400" />
+                <label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <Building2 className="h-3.5 w-3.5 text-slate-400" />
                   Destination Warehouse
                 </label>
                 <select
                   value={destWarehouseId}
                   onChange={(e) => setDestWarehouseId(e.target.value)}
-                  className="w-full h-9 rounded-lg px-3 bg-zinc-950/60 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="w-full h-9 rounded-lg px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 >
                   {warehouses.map((wh) => (
                     <option key={wh.id} value={wh.id}>
@@ -461,17 +451,17 @@ export default function NewTransferPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-                  Destination Location <span className="text-red-400">*</span>
+                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                  Destination Location <span className="text-rose-500">*</span>
                 </label>
                 <select
                   value={destLocationId}
                   onChange={(e) => setDestLocationId(e.target.value)}
                   required
-                  className={`w-full h-9 rounded-lg px-3 bg-zinc-950/60 border text-zinc-200 text-sm focus:outline-none transition-colors ${
+                  className={`w-full h-9 rounded-lg px-3 bg-white dark:bg-slate-900 border text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 transition-colors ${
                     sourceLocationId === destLocationId
-                      ? "border-red-500 focus:border-red-500"
-                      : "border-zinc-800 focus:border-emerald-500"
+                      ? "border-rose-300 dark:border-rose-800 focus:ring-rose-500/20"
+                      : "border-slate-200 dark:border-slate-700 focus:ring-indigo-500/20"
                   }`}
                 >
                   {destLocations.map((loc) => (
@@ -481,7 +471,7 @@ export default function NewTransferPage() {
                   ))}
                 </select>
                 {sourceLocationId === destLocationId && (
-                  <p className="text-[11px] text-red-400">
+                  <p className="text-[11px] text-rose-500 mt-1">
                     Source and destination locations cannot be identical.
                   </p>
                 )}
@@ -491,42 +481,40 @@ export default function NewTransferPage() {
         </div>
 
         {/* Schedule & Notes Card */}
-        <Card className="p-5 bg-zinc-900/60 border-zinc-800/80 space-y-4">
+        <Card className="p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
                 Scheduled Transfer Date
               </label>
               <Input
                 type="date"
                 value={scheduledDate}
                 onChange={(e) => setScheduledDate(e.target.value)}
-                className="bg-zinc-950/60 border-zinc-800 text-zinc-100 focus:border-emerald-500"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+              <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
                 Transfer Notes / Reason
               </label>
               <Input
                 placeholder="e.g. Stock replenishment for Production, Rack consolidation"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="bg-zinc-950/60 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-500"
               />
             </div>
           </div>
         </Card>
 
         {/* Line Items Table */}
-        <Card className="p-5 bg-zinc-900/60 border-zinc-800/80 space-y-4">
-          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+        <Card className="p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div>
-              <h2 className="text-base font-semibold text-zinc-100 flex items-center gap-2">
-                <Package className="h-4 w-4 text-emerald-400" />
+              <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <Package className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                 Products to Transfer
               </h2>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Select products and quantities to move from source to destination.
               </p>
             </div>
@@ -535,7 +523,7 @@ export default function NewTransferPage() {
               variant="outline"
               size="sm"
               onClick={handleAddLine}
-              className="border-zinc-700 bg-zinc-800/60 hover:bg-zinc-750 text-zinc-200 text-xs"
+              className="text-xs"
             >
               <Plus className="h-3.5 w-3.5 mr-1" />
               Add Product Line
@@ -554,26 +542,26 @@ export default function NewTransferPage() {
                   key={item.id}
                   className={`p-4 rounded-xl border transition-all ${
                     isInsufficient
-                      ? "bg-red-500/5 border-red-500/30"
-                      : "bg-zinc-950/40 border-zinc-800/80 hover:border-zinc-700"
+                      ? "bg-rose-50/50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/40"
+                      : "bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/70 dark:border-slate-800"
                   }`}
                 >
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
                     {/* Line Index */}
-                    <div className="hidden md:flex md:col-span-1 items-center justify-center pt-2 text-zinc-500 font-mono text-xs font-semibold">
+                    <div className="hidden md:flex md:col-span-1 items-center justify-center pt-2 text-slate-400 font-mono text-xs font-semibold">
                       #{index + 1}
                     </div>
 
                     {/* Product Select */}
                     <div className="md:col-span-6 space-y-1">
-                      <label className="text-[11px] font-semibold text-zinc-400 uppercase">
-                        Product <span className="text-red-400">*</span>
+                      <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase">
+                        Product <span className="text-rose-500">*</span>
                       </label>
                       <select
                         value={item.productId}
                         onChange={(e) => handleProductChange(index, e.target.value)}
                         required
-                        className="w-full h-9 rounded-lg px-3 bg-zinc-900 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-emerald-500"
+                        className="w-full h-9 rounded-lg px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                       >
                         <option value="">Select Product...</option>
                         {products.map((prod) => (
@@ -586,9 +574,9 @@ export default function NewTransferPage() {
 
                     {/* Transfer Quantity */}
                     <div className="md:col-span-4 space-y-1">
-                      <label className="text-[11px] font-semibold text-zinc-400 uppercase flex items-center justify-between">
+                      <label className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase flex items-center justify-between">
                         <span>Transfer Quantity</span>
-                        <span className="text-zinc-500 font-normal">({item.uom})</span>
+                        <span className="text-slate-400 font-normal">({item.uom})</span>
                       </label>
                       <div className="flex items-center gap-2">
                         <Input
@@ -604,10 +592,10 @@ export default function NewTransferPage() {
                               )
                             );
                           }}
-                          className="bg-zinc-900 border-zinc-800 text-zinc-100 focus:border-emerald-500 h-9 text-sm"
+                          className="h-9 text-sm"
                           required
                         />
-                        <span className="text-xs font-mono text-zinc-400 min-w-[32px]">
+                        <span className="text-xs font-mono text-slate-500 dark:text-slate-400 min-w-[32px]">
                           {item.uom}
                         </span>
                       </div>
@@ -621,7 +609,7 @@ export default function NewTransferPage() {
                         size="sm"
                         disabled={items.length <= 1}
                         onClick={() => handleRemoveLine(index)}
-                        className="h-9 w-9 p-0 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 disabled:opacity-30"
+                        className="h-9 w-9 p-0 text-slate-400 hover:text-rose-500 disabled:opacity-30"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -629,31 +617,31 @@ export default function NewTransferPage() {
                   </div>
 
                   {/* Stock Availability Indicator */}
-                  <div className="mt-2.5 pt-2 border-t border-zinc-800/60 flex items-center justify-between text-xs">
+                  <div className="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs">
                     {item.loadingStock ? (
-                      <span className="text-zinc-400 flex items-center gap-1.5">
-                        <Loader2 className="h-3 w-3 animate-spin text-emerald-400" />
+                      <span className="text-slate-400 flex items-center gap-1.5">
+                        <Loader2 className="h-3 w-3 animate-spin text-indigo-500" />
                         Checking source stock availability...
                       </span>
                     ) : item.availableStock !== null && item.availableStock !== undefined ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-zinc-400">Available at source location:</span>
+                        <span className="text-slate-500 dark:text-slate-400">Available at source location:</span>
                         <span
                           className={`font-semibold font-mono ${
-                            isInsufficient ? "text-red-400" : "text-emerald-400"
+                            isInsufficient ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"
                           }`}
                         >
                           {item.availableStock} {item.uom}
                         </span>
                         {isInsufficient && (
-                          <span className="text-red-400/90 text-[11px] flex items-center gap-1 bg-red-500/10 px-2 py-0.5 rounded-md">
+                          <span className="text-rose-600 dark:text-rose-400 text-[11px] flex items-center gap-1 bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-900/40">
                             <AlertCircle className="h-3 w-3" />
                             Warning: Transfer ({item.quantity}) exceeds available ({item.availableStock})
                           </span>
                         )}
                       </div>
                     ) : (
-                      <span className="text-zinc-500">
+                      <span className="text-slate-400">
                         Select a product to view source stock.
                       </span>
                     )}
@@ -670,7 +658,6 @@ export default function NewTransferPage() {
             <Button
               type="button"
               variant="outline"
-              className="border-zinc-700 bg-zinc-850 hover:bg-zinc-800 text-zinc-300"
             >
               Cancel
             </Button>
@@ -678,7 +665,7 @@ export default function NewTransferPage() {
           <Button
             type="submit"
             disabled={submitting || sourceLocationId === destLocationId}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium min-w-[160px] shadow-lg shadow-emerald-500/20"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium min-w-[160px] shadow-sm"
           >
             {submitting ? (
               <>

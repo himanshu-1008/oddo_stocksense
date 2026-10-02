@@ -24,7 +24,7 @@ export class OtpRepository {
         otpHash,
         expiresAt,
         attempts: 0,
-        maxAttempts: 3,
+        maxAttempts: 5,
       },
     });
   }
@@ -40,6 +40,29 @@ export class OtpRepository {
         expiresAt: { gt: new Date() },
       },
       orderBy: { createdAt: "desc" },
+    });
+  }
+
+  /**
+   * Finds the most recently created OTP (to check resend cooldown).
+   */
+  async findRecentOTP(userId: string, withinSeconds: number = 60) {
+    const cutoff = new Date(Date.now() - withinSeconds * 1000);
+    return prisma.passwordResetOTP.findFirst({
+      where: {
+        userId,
+        createdAt: { gte: cutoff },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  /**
+   * Finds an OTP record by ID.
+   */
+  async findById(id: string) {
+    return prisma.passwordResetOTP.findUnique({
+      where: { id },
     });
   }
 

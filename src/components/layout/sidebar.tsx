@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,6 +18,8 @@ import {
   User,
   LogOut,
   AlertTriangle,
+  Tags,
+  X,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth/auth-context";
 
@@ -48,9 +48,14 @@ const navItems: NavItem[] = [
     icon: Package,
     children: [
       {
-        title: "All Products",
+        title: "Products",
         href: "/products",
         icon: Package,
+      },
+      {
+        title: "Categories",
+        href: "/settings/categories",
+        icon: Tags,
       },
       {
         title: "Low Stock Alerts",
@@ -80,7 +85,7 @@ const navItems: NavItem[] = [
         icon: Shuffle,
       },
       {
-        title: "Adjustments",
+        title: "Inventory Adjustments",
         href: "/operations/adjustments",
         icon: SlidersHorizontal,
       },
@@ -97,26 +102,39 @@ const navItems: NavItem[] = [
     icon: Settings,
     children: [
       {
-        title: "Warehouses & Locs",
+        title: "Warehouse",
         href: "/settings/warehouses",
         icon: Building2,
       },
     ],
   },
   {
-    title: "My Profile",
+    title: "Profile",
     href: "/profile",
     icon: User,
+    children: [
+      {
+        title: "My Profile",
+        href: "/profile",
+        icon: User,
+      },
+    ],
   },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onClose?: () => void;
+  isMobile?: boolean;
+}
+
+export function Sidebar({ onClose, isMobile = false }: SidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [openSections, setOpenSections] = React.useState<Record<string, boolean>>({
     Products: true,
     Operations: true,
     Settings: true,
+    Profile: false,
   });
 
   const toggleSection = (title: string) => {
@@ -124,27 +142,40 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col shrink-0 h-screen sticky top-0">
+    <aside className={cn(
+      "w-64 border-r border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col shrink-0 h-screen sticky top-0 z-20 select-none",
+      isMobile && "h-full w-full"
+    )}>
       {/* Brand Header */}
-      <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-800 gap-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
-          <Boxes className="w-5 h-5" />
-        </div>
-        <div>
-          <h1 className="font-bold text-base tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
-            StockSense
-            <span className="text-[10px] uppercase font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 px-1.5 py-0.5 rounded">
-              v1.0
-            </span>
-          </h1>
-          <p className="text-[11px] text-slate-400">Inventory System</p>
-        </div>
+      <div className="h-16 flex items-center justify-between px-6 border-b border-slate-200/80 dark:border-slate-800">
+        <Link href="/dashboard" className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm shadow-indigo-600/30">
+            <Boxes className="w-4 h-4" />
+          </div>
+          <div>
+            <h1 className="font-bold text-sm tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+              StockSense
+              <span className="text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 px-1.5 py-0.2 rounded">
+                v1.0
+              </span>
+            </h1>
+            <p className="text-[11px] text-slate-400 font-medium leading-none">Inventory System</p>
+          </div>
+        </Link>
+        {isMobile && onClose && (
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Nav List */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
-        <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 mb-2">
-          Navigation
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 mb-2">
+          Menu
         </div>
 
         {navItems.map((item) => {
@@ -157,30 +188,31 @@ export function Sidebar() {
 
           if (hasChildren) {
             return (
-              <div key={item.title} className="space-y-1">
+              <div key={item.title} className="space-y-0.5">
                 <button
+                  type="button"
                   onClick={() => toggleSection(item.title)}
                   className={cn(
-                    "w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "w-full flex items-center justify-between px-3 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer",
                     isActive
-                      ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/30 font-semibold"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-900"
+                      ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50/60 dark:bg-indigo-950/30"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-900"
                   )}
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4" />
+                  <div className="flex items-center gap-2.5">
+                    <Icon className="w-4 h-4 text-slate-400" />
                     <span>{item.title}</span>
                   </div>
                   <ChevronDown
                     className={cn(
-                      "w-4 h-4 text-slate-400 transition-transform duration-200",
+                      "w-3.5 h-3.5 text-slate-400 transition-transform duration-200",
                       isOpen && "rotate-180"
                     )}
                   />
                 </button>
 
                 {isOpen && (
-                  <div className="pl-6 space-y-1 pt-1 border-l border-slate-200 dark:border-slate-800 ml-4">
+                  <div className="pl-6 space-y-0.5 pt-0.5 border-l border-slate-200/70 dark:border-slate-800 ml-4">
                     {item.children?.map((child) => {
                       const ChildIcon = child.icon;
                       const isChildActive = pathname === child.href;
@@ -189,14 +221,15 @@ export function Sidebar() {
                         <Link
                           key={child.href}
                           href={child.href}
+                          onClick={isMobile ? onClose : undefined}
                           className={cn(
-                            "flex items-center gap-2.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
+                            "flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors",
                             isChildActive
-                              ? "bg-indigo-600 text-white dark:bg-indigo-500 shadow-sm"
+                              ? "bg-indigo-600 text-white dark:bg-indigo-600 shadow-xs font-semibold"
                               : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-900"
                           )}
                         >
-                          <ChildIcon className="w-3.5 h-3.5" />
+                          <ChildIcon className={cn("w-3.5 h-3.5", isChildActive ? "text-white" : "text-slate-400")} />
                           <span>{child.title}</span>
                         </Link>
                       );
@@ -211,25 +244,30 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={isMobile ? onClose : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                "flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg transition-colors",
                 isActive
-                  ? "bg-indigo-600 text-white dark:bg-indigo-500 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-900"
+                  ? "bg-indigo-600 text-white dark:bg-indigo-600 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-900"
               )}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className={cn("w-4 h-4", isActive ? "text-white" : "text-slate-400")} />
               <span>{item.title}</span>
             </Link>
           );
         })}
       </div>
 
-      {/* Footer / User Widget */}
-      <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-        <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-          <Link href="/profile" className="flex items-center gap-2.5 min-w-0 flex-1 hover:opacity-80">
-            <div className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 flex items-center justify-center font-bold text-[11px] border border-indigo-200 dark:border-indigo-800 shrink-0">
+      {/* Footer User Info */}
+      <div className="p-3 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
+          <Link
+            href="/profile"
+            onClick={isMobile ? onClose : undefined}
+            className="flex items-center gap-2.5 min-w-0 flex-1 hover:opacity-80 transition-opacity"
+          >
+            <div className="w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-200/60 dark:border-indigo-800 shrink-0">
               {user?.name ? user.name[0].toUpperCase() : "U"}
             </div>
             <div className="min-w-0 flex-1">
@@ -242,7 +280,10 @@ export function Sidebar() {
             </div>
           </Link>
           <button
-            onClick={logout}
+            onClick={() => {
+              if (isMobile && onClose) onClose();
+              logout();
+            }}
             title="Sign Out"
             className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-colors shrink-0"
           >

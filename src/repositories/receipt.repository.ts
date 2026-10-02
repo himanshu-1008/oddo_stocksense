@@ -225,8 +225,9 @@ export class ReceiptRepository {
       );
     }
 
-    return prisma.$transaction(async (tx) => {
-      // If items provided, replace them
+    return prisma.$transaction(
+      async (tx) => {
+        // If items provided, replace them
       if (data.items) {
         await tx.receiptItem.deleteMany({
           where: { receiptId: id },
@@ -264,7 +265,7 @@ export class ReceiptRepository {
           },
         },
       });
-    });
+    }, { maxWait: 15000, timeout: 30000 });
   }
 
   async updateStatus(id: string, status: OperationStatus) {
@@ -275,8 +276,9 @@ export class ReceiptRepository {
   }
 
   async validateReceiptTransaction(receiptId: string, validatedById: string) {
-    return prisma.$transaction(async (tx) => {
-      // 1. Fetch current receipt with lock & relations
+    return prisma.$transaction(
+      async (tx) => {
+        // 1. Fetch current receipt with lock & relations
       const receipt = await tx.receipt.findUnique({
         where: { id: receiptId },
         include: {
@@ -373,7 +375,7 @@ export class ReceiptRepository {
           },
         },
       });
-    });
+    }, { maxWait: 15000, timeout: 30000 });
   }
 }
 

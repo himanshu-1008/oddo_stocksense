@@ -213,35 +213,35 @@ export default function MoveHistoryPage() {
     switch (type) {
       case "RECEIPT":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
             <ArrowDownToLine className="h-3 w-3" />
             Receipt
           </span>
         );
       case "DELIVERY":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
             <ArrowUpFromLine className="h-3 w-3" />
             Delivery
           </span>
         );
       case "INTERNAL_TRANSFER":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
             <Shuffle className="h-3 w-3" />
             Transfer
           </span>
         );
       case "ADJUSTMENT":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-semibold bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/50">
             <SlidersHorizontal className="h-3 w-3" />
             Adjustment
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-zinc-800 text-zinc-300">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
             {type}
           </span>
         );
@@ -256,21 +256,21 @@ export default function MoveHistoryPage() {
     switch (record.operationType) {
       case "RECEIPT":
         return (
-          <span className="font-mono font-bold text-emerald-400 flex items-center justify-end gap-1">
+          <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-end gap-1">
             <TrendingUp className="h-3.5 w-3.5" />
             +{Math.abs(qty)} {uom}
           </span>
         );
       case "DELIVERY":
         return (
-          <span className="font-mono font-bold text-amber-400 flex items-center justify-end gap-1">
+          <span className="font-mono font-bold text-amber-600 dark:text-amber-400 flex items-center justify-end gap-1">
             <TrendingDown className="h-3.5 w-3.5" />
             -{Math.abs(qty)} {uom}
           </span>
         );
       case "INTERNAL_TRANSFER":
         return (
-          <span className="font-mono font-bold text-blue-400 flex items-center justify-end gap-1">
+          <span className="font-mono font-bold text-blue-600 dark:text-blue-400 flex items-center justify-end gap-1">
             <ArrowRight className="h-3.5 w-3.5" />
             {Math.abs(qty)} {uom}
           </span>
@@ -279,7 +279,7 @@ export default function MoveHistoryPage() {
         return (
           <span
             className={`font-mono font-bold flex items-center justify-end gap-1 ${
-              qty > 0 ? "text-emerald-400" : qty < 0 ? "text-red-400" : "text-zinc-400"
+              qty > 0 ? "text-emerald-600 dark:text-emerald-400" : qty < 0 ? "text-rose-600 dark:text-rose-400" : "text-slate-500"
             }`}
           >
             {qty > 0 ? (
@@ -298,7 +298,7 @@ export default function MoveHistoryPage() {
         );
       default:
         return (
-          <span className="font-mono font-bold text-zinc-200">
+          <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
             {qty} {uom}
           </span>
         );
@@ -306,21 +306,21 @@ export default function MoveHistoryPage() {
   };
 
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Page Header */}
       <PageHeader
-        title="Stock Movement History & Ledger"
+        title="Stock Move History & Ledger"
         description="Centralized, immutable audit trail of all receipts, deliveries, internal transfers, and physical count adjustments."
       />
 
       {/* KPI Chips */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {[
-          { label: "Total Movements", value: stats.total || totalCount, key: "ALL", icon: Layers, color: "text-zinc-400" },
-          { label: "Receipts", value: stats.receipts, key: "RECEIPT", icon: ArrowDownToLine, color: "text-emerald-400" },
-          { label: "Deliveries", value: stats.deliveries, key: "DELIVERY", icon: ArrowUpFromLine, color: "text-amber-400" },
-          { label: "Transfers", value: stats.transfers, key: "INTERNAL_TRANSFER", icon: Shuffle, color: "text-blue-400" },
-          { label: "Adjustments", value: stats.adjustments, key: "ADJUSTMENT", icon: SlidersHorizontal, color: "text-purple-400" },
+          { label: "Total Movements", value: stats.total || totalCount, key: "ALL", icon: Layers, color: "text-slate-500" },
+          { label: "Receipts", value: stats.receipts, key: "RECEIPT", icon: ArrowDownToLine, color: "text-emerald-500" },
+          { label: "Deliveries", value: stats.deliveries, key: "DELIVERY", icon: ArrowUpFromLine, color: "text-indigo-500" },
+          { label: "Transfers", value: stats.transfers, key: "INTERNAL_TRANSFER", icon: Shuffle, color: "text-violet-500" },
+          { label: "Adjustments", value: stats.adjustments, key: "ADJUSTMENT", icon: SlidersHorizontal, color: "text-amber-500" },
         ].map((tab) => {
           const isActive = selectedOperation === tab.key;
           const Icon = tab.icon;
@@ -331,34 +331,34 @@ export default function MoveHistoryPage() {
                 setSelectedOperation(tab.key);
                 setPage(1);
               }}
-              className={`p-3.5 rounded-xl border text-left transition-all duration-200 flex flex-col justify-between ${
+              className={`p-3.5 rounded-xl border text-left transition-all duration-150 flex flex-col justify-between cursor-pointer ${
                 isActive
-                  ? "bg-zinc-800/90 border-indigo-500/50 shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/30"
-                  : "bg-zinc-900/50 border-zinc-800/80 hover:bg-zinc-800/40 hover:border-zinc-700 text-zinc-400"
+                  ? "bg-indigo-50/70 dark:bg-indigo-950/40 border-indigo-300 dark:border-indigo-800 shadow-xs"
+                  : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60"
               }`}
             >
               <div className="flex items-center justify-between text-xs font-medium">
-                <span className={isActive ? "text-zinc-200" : "text-zinc-400"}>{tab.label}</span>
+                <span className={isActive ? "text-indigo-950 dark:text-indigo-200 font-semibold" : "text-slate-500"}>{tab.label}</span>
                 <Icon className={`h-4 w-4 ${tab.color}`} />
               </div>
-              <div className="mt-2 text-xl font-bold text-zinc-100">{tab.value}</div>
+              <div className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">{tab.value}</div>
             </button>
           );
         })}
       </div>
 
       {/* Filter & Search Bar */}
-      <Card className="p-4 bg-zinc-900/60 border-zinc-800/80 backdrop-blur-sm space-y-3">
+      <Card className="p-4 bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3">
         <form onSubmit={handleSearchSubmit} className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             {/* Search Input */}
             <div className="md:col-span-5 relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search by SKU, product name, or reference (e.g. REC-, TRF-)..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 bg-zinc-950/60 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:border-indigo-500"
+                className="pl-9 bg-slate-50/70 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 text-xs"
               />
             </div>
 
@@ -371,7 +371,7 @@ export default function MoveHistoryPage() {
                   setPage(1);
                 }}
                 aria-label="Filter by Product"
-                className="w-full h-9 rounded-lg px-3 bg-zinc-950/60 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full h-9 rounded-lg px-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
               >
                 <option value="ALL">All Products</option>
                 {products.map((p) => (
@@ -391,7 +391,7 @@ export default function MoveHistoryPage() {
                   setPage(1);
                 }}
                 aria-label="Filter by Warehouse"
-                className="w-full h-9 rounded-lg px-3 bg-zinc-950/60 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full h-9 rounded-lg px-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
               >
                 <option value="ALL">All Warehouses</option>
                 {warehouses.map((wh) => (
@@ -407,7 +407,7 @@ export default function MoveHistoryPage() {
               <Button
                 type="submit"
                 variant="outline"
-                className="flex-1 border-zinc-700 bg-zinc-800/60 hover:bg-zinc-750 text-zinc-200"
+                className="flex-1 h-9 text-xs border-slate-200 dark:border-slate-700"
               >
                 Filter
               </Button>
@@ -421,7 +421,7 @@ export default function MoveHistoryPage() {
                   type="button"
                   variant="ghost"
                   onClick={handleResetFilters}
-                  className="text-zinc-400 hover:text-zinc-200 px-2"
+                  className="h-9 text-xs text-slate-500 hover:text-slate-900 px-2"
                 >
                   Clear
                 </Button>
@@ -430,9 +430,9 @@ export default function MoveHistoryPage() {
           </div>
 
           {/* Date Range Sub-Bar */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-1 border-t border-zinc-800/60">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-zinc-400 whitespace-nowrap">From:</span>
+              <span className="text-xs text-slate-500 whitespace-nowrap">From:</span>
               <Input
                 type="date"
                 value={startDate}
@@ -440,11 +440,11 @@ export default function MoveHistoryPage() {
                   setStartDate(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 bg-zinc-950/60 border-zinc-800 text-zinc-200 text-xs focus:border-indigo-500"
+                className="h-8 bg-slate-50/70 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 text-xs"
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-zinc-400 whitespace-nowrap">To:</span>
+              <span className="text-xs text-slate-500 whitespace-nowrap">To:</span>
               <Input
                 type="date"
                 value={endDate}
@@ -452,7 +452,7 @@ export default function MoveHistoryPage() {
                   setEndDate(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 bg-zinc-950/60 border-zinc-800 text-zinc-200 text-xs focus:border-indigo-500"
+                className="h-8 bg-slate-50/70 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 text-xs"
               />
             </div>
           </div>
@@ -460,19 +460,19 @@ export default function MoveHistoryPage() {
       </Card>
 
       {/* Ledger Records Table */}
-      <Card className="bg-zinc-900/60 border-zinc-800/80 overflow-hidden">
+      <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs">
         {loading ? (
           <div className="py-24 flex flex-col items-center justify-center space-y-3">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-            <p className="text-sm text-zinc-400">Loading stock movement ledger...</p>
+            <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+            <p className="text-xs text-slate-500">Loading stock movement ledger...</p>
           </div>
         ) : movements.length === 0 ? (
-          <div className="py-20 text-center space-y-4">
-            <div className="h-12 w-12 rounded-full bg-zinc-800 flex items-center justify-center mx-auto text-zinc-400">
+          <div className="py-20 text-center space-y-3">
+            <div className="h-12 w-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
               <History className="h-6 w-6" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-medium text-zinc-200">
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                 {search ||
                 selectedProduct !== "ALL" ||
                 selectedOperation !== "ALL" ||
@@ -480,9 +480,9 @@ export default function MoveHistoryPage() {
                 startDate ||
                 endDate
                   ? "No movements match your filters."
-                  : "No stock movements found."}
+                  : "No stock movements recorded yet."}
               </h3>
-              <p className="text-sm text-zinc-400 max-w-sm mx-auto">
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
                 Stock movements are automatically recorded in the ledger when receipts, deliveries, transfers, or adjustments are validated.
               </p>
             </div>
@@ -496,7 +496,7 @@ export default function MoveHistoryPage() {
                 variant="outline"
                 size="sm"
                 onClick={handleResetFilters}
-                className="border-zinc-700 bg-zinc-800 text-zinc-300"
+                className="h-8 text-xs border-slate-200 dark:border-slate-700"
               >
                 Reset All Filters
               </Button>
@@ -504,39 +504,39 @@ export default function MoveHistoryPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-zinc-950/60 text-zinc-400 uppercase text-[11px] font-semibold border-b border-zinc-800/80">
+            <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+              <thead className="bg-slate-50 dark:bg-slate-900/80 text-slate-500 uppercase text-[11px] font-semibold border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="py-3 px-4">Date / Time</th>
-                  <th className="py-3 px-4">Product</th>
-                  <th className="py-3 px-4">Operation</th>
-                  <th className="py-3 px-4">Reference</th>
-                  <th className="py-3 px-4">Source</th>
-                  <th className="py-3 px-4">Destination</th>
-                  <th className="py-3 px-4 text-right">Quantity</th>
-                  <th className="py-3 px-4">Performed By</th>
+                  <th className="py-3.5 px-6">Date / Time</th>
+                  <th className="py-3.5 px-6">Product</th>
+                  <th className="py-3.5 px-6">Operation</th>
+                  <th className="py-3.5 px-6">Reference</th>
+                  <th className="py-3.5 px-6">Source</th>
+                  <th className="py-3.5 px-6">Destination</th>
+                  <th className="py-3.5 px-6 text-right">Quantity</th>
+                  <th className="py-3.5 px-6">Performed By</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/60">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
                 {movements.map((movement) => {
                   const refUrl = getReferenceLink(movement.reference);
 
                   return (
                     <tr
                       key={movement.id}
-                      className="hover:bg-zinc-800/30 transition-colors group"
+                      className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors group"
                     >
                       {/* Date / Time */}
-                      <td className="py-3.5 px-4 text-zinc-300 text-xs whitespace-nowrap">
+                      <td className="py-3.5 px-6 text-slate-600 dark:text-slate-400 text-xs whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="font-medium text-zinc-200">
+                          <span className="font-medium text-slate-900 dark:text-slate-100">
                             {new Date(movement.createdAt).toLocaleDateString(undefined, {
                               year: "numeric",
                               month: "short",
                               day: "numeric",
                             })}
                           </span>
-                          <span className="text-[11px] text-zinc-500 font-mono">
+                          <span className="text-[11px] text-slate-400 font-mono">
                             {new Date(movement.createdAt).toLocaleTimeString(undefined, {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -546,21 +546,21 @@ export default function MoveHistoryPage() {
                       </td>
 
                       {/* Product */}
-                      <td className="py-3.5 px-4 text-zinc-200">
+                      <td className="py-3.5 px-6 text-slate-900 dark:text-slate-100">
                         <div className="flex flex-col">
                           <Link
                             href={`/products/${movement.productId}`}
-                            className="font-semibold text-zinc-100 hover:text-indigo-400 transition-colors flex items-center gap-1"
+                            className="font-semibold text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1"
                           >
-                            <Package className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                            <Package className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                             <span>{movement.product.name}</span>
                           </Link>
-                          <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-mono">
+                          <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
                             <span>{movement.product.sku}</span>
                             {movement.product.category && (
                               <>
                                 <span>•</span>
-                                <span className="text-zinc-500">
+                                <span className="text-slate-500">
                                   {movement.product.category.name}
                                 </span>
                               </>
@@ -570,15 +570,15 @@ export default function MoveHistoryPage() {
                       </td>
 
                       {/* Operation Type */}
-                      <td className="py-3.5 px-4">
+                      <td className="py-3.5 px-6">
                         {renderOperationBadge(movement.operationType)}
                       </td>
 
                       {/* Reference */}
-                      <td className="py-3.5 px-4 font-mono text-xs">
+                      <td className="py-3.5 px-6 font-mono text-xs">
                         <Link
                           href={refUrl}
-                          className="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 hover:underline"
+                          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-semibold flex items-center gap-1 hover:underline"
                         >
                           <span>{movement.reference}</span>
                           <ExternalLink className="h-3 w-3 opacity-60" />
@@ -586,58 +586,58 @@ export default function MoveHistoryPage() {
                       </td>
 
                       {/* Source Location */}
-                      <td className="py-3.5 px-4 text-zinc-300 text-xs">
+                      <td className="py-3.5 px-6 text-slate-600 dark:text-slate-400 text-xs">
                         {movement.sourceLocation ? (
                           <div className="flex flex-col">
-                            <span className="font-medium text-zinc-200 flex items-center gap-1">
-                              <MapPin className="h-3 w-3 text-amber-400 shrink-0" />
+                            <span className="font-medium text-slate-900 dark:text-slate-100 flex items-center gap-1">
+                              <MapPin className="h-3 w-3 text-amber-500 shrink-0" />
                               {movement.sourceLocation.name}
                             </span>
-                            <span className="text-[11px] text-zinc-500 font-mono">
+                            <span className="text-[11px] text-slate-400 font-mono">
                               {movement.sourceLocation.warehouse?.name || "Warehouse"} (
                               {movement.sourceLocation.code})
                             </span>
                           </div>
                         ) : movement.operationType === "RECEIPT" ? (
-                          <span className="text-zinc-500 italic text-[11px]">
+                          <span className="text-slate-400 italic text-[11px]">
                             Vendor / Supplier
                           </span>
                         ) : (
-                          <span className="text-zinc-600 font-mono">-</span>
+                          <span className="text-slate-400 font-mono">-</span>
                         )}
                       </td>
 
                       {/* Destination Location */}
-                      <td className="py-3.5 px-4 text-zinc-300 text-xs">
+                      <td className="py-3.5 px-6 text-slate-600 dark:text-slate-400 text-xs">
                         {movement.destinationLocation ? (
                           <div className="flex flex-col">
-                            <span className="font-medium text-zinc-200 flex items-center gap-1">
-                              <MapPin className="h-3 w-3 text-emerald-400 shrink-0" />
+                            <span className="font-medium text-slate-900 dark:text-slate-100 flex items-center gap-1">
+                              <MapPin className="h-3 w-3 text-emerald-500 shrink-0" />
                               {movement.destinationLocation.name}
                             </span>
-                            <span className="text-[11px] text-zinc-500 font-mono">
+                            <span className="text-[11px] text-slate-400 font-mono">
                               {movement.destinationLocation.warehouse?.name || "Warehouse"} (
                               {movement.destinationLocation.code})
                             </span>
                           </div>
                         ) : movement.operationType === "DELIVERY" ? (
-                          <span className="text-zinc-500 italic text-[11px]">
+                          <span className="text-slate-400 italic text-[11px]">
                             Customer / Outbound
                           </span>
                         ) : (
-                          <span className="text-zinc-600 font-mono">-</span>
+                          <span className="text-slate-400 font-mono">-</span>
                         )}
                       </td>
 
                       {/* Quantity */}
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-3.5 px-6 text-right">
                         {renderQuantityDisplay(movement)}
                       </td>
 
                       {/* User */}
-                      <td className="py-3.5 px-4 text-zinc-300 text-xs whitespace-nowrap">
+                      <td className="py-3.5 px-6 text-slate-600 dark:text-slate-400 text-xs whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
-                          <User className="h-3 w-3 text-zinc-500 shrink-0" />
+                          <User className="h-3 w-3 text-slate-400 shrink-0" />
                           <span>
                             {movement.performedBy?.name || "System Admin"}
                           </span>
@@ -653,13 +653,13 @@ export default function MoveHistoryPage() {
 
         {/* Server Pagination */}
         {!loading && movements.length > 0 && (
-          <div className="p-4 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400 bg-zinc-950/40">
+          <div className="py-3.5 px-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 bg-slate-50 dark:bg-slate-900/80">
             <div>
-              Showing <span className="font-semibold text-zinc-200">{(page - 1) * 20 + 1}</span> to{" "}
-              <span className="font-semibold text-zinc-200">
+              Showing <span className="font-semibold text-slate-900 dark:text-slate-100">{(page - 1) * 20 + 1}</span> to{" "}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">
                 {Math.min(page * 20, totalCount)}
               </span>{" "}
-              of <span className="font-semibold text-zinc-200">{totalCount}</span> movements
+              of <span className="font-semibold text-slate-900 dark:text-slate-100">{totalCount}</span> movements
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -667,11 +667,11 @@ export default function MoveHistoryPage() {
                 size="sm"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-8 border-zinc-800 bg-zinc-900 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
+                className="h-8 text-xs border-slate-200 dark:border-slate-700"
               >
                 Previous
               </Button>
-              <span className="px-2 font-medium text-zinc-300">
+              <span className="px-2 font-medium text-slate-700 dark:text-slate-300">
                 Page {page} of {totalPages}
               </span>
               <Button
@@ -679,7 +679,7 @@ export default function MoveHistoryPage() {
                 size="sm"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="h-8 border-zinc-800 bg-zinc-900 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
+                className="h-8 text-xs border-slate-200 dark:border-slate-700"
               >
                 Next
               </Button>

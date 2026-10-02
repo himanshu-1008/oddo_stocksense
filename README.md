@@ -1,291 +1,507 @@
-# StockSense — Modular Inventory Management System
+# StockSense
 
-> **Odoo Hackathon Project**  
-> **Status:** Phase 1 — Project Foundation & Architecture (Complete)
+A modular Inventory Management System built for the Odoo Hackathon.
 
----
-
-## 📌 Project Overview
-
-**StockSense** is a modern, modular, and scalable Inventory Management System designed to centralize warehouse operations, optimize stock levels, and provide complete traceability across multi-warehouse locations.
-
-The core purpose of StockSense is to maintain accurate inventory levels by automatically recording and updating stock whenever warehouse operations (receipts, deliveries, internal transfers, and physical adjustments) are executed.
+StockSense helps inventory managers and warehouse staff manage products, warehouses, stock movements, receipts, deliveries, internal transfers, inventory adjustments, and stock history from a centralized system.
 
 ---
 
-## 🚀 Tech Stack
+## 🚀 Features
 
-| Layer | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Frontend Framework** | **Next.js 16 (App Router)** | React Server Components, high performance, file-based routing |
-| **Language** | **TypeScript (Strict Mode)** | End-to-end type safety across client, services, and database |
-| **Styling & UI** | **Tailwind CSS + CVA + Lucide** | Responsive, modern dark/light UI design system |
-| **Database ORM** | **Prisma ORM (v6)** | Type-safe schema definition, migrations, and query generation |
-| **Database** | **PostgreSQL** | Relational data integrity, ACID transactions, and indexes |
-| **Validation** | **Zod** | Schema validation for API payloads, forms, and business logic |
-| **Forms** | **React Hook Form** | High-performance form state management |
+### Authentication
+
+* User Signup
+* Login / Logout
+* Forgot Password with OTP
+* Protected routes
+
+### Product Management
+
+* Create and update products
+* SKU management
+* Product categories
+* Unit of measurement
+* Minimum stock threshold
+* Stock status
+
+### Warehouse Management
+
+* Multiple warehouses
+* Warehouse locations
+* Location-wise stock tracking
+
+### Inventory Operations
+
+#### Receipts
+
+Receive incoming goods and automatically increase stock.
+
+#### Delivery Orders
+
+Deliver outgoing goods and automatically decrease stock.
+
+#### Internal Transfers
+
+Move stock between locations while keeping total stock unchanged.
+
+#### Inventory Adjustments
+
+Correct stock when physical quantity differs from system quantity.
+
+### Stock Ledger
+
+Centralized Move History containing:
+
+* Receipts
+* Deliveries
+* Internal Transfers
+* Inventory Adjustments
+
+### Dashboard
+
+Real database-driven KPIs:
+
+* Total Stock
+* Low / Out of Stock
+* Pending Receipts
+* Pending Deliveries
+* Scheduled Transfers
+
+### Low Stock
+
+* Minimum stock threshold
+* Low stock warning
+* Out-of-stock status
 
 ---
 
-## 🏗️ Layered Architecture
+## 🛠️ Tech Stack
 
-StockSense enforces a strict separation of concerns:
+* **Frontend:** Next.js, React, TypeScript
+* **Styling:** Tailwind CSS
+* **Backend:** Next.js API / Server Actions
+* **Database:** PostgreSQL
+* **ORM:** Prisma
+* **Validation:** Zod
+* **Authentication:** Auth.js / NextAuth
+* **Email:** Resend
+* **Version Control:** Git + GitHub
+
+---
+
+## 📁 Project Structure
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│                    Next.js App Router                       │
-│        (UI Components / Pages / Route Handlers)             │
-└─────────────────────────────┬───────────────────────────────┘
-                              │ Validates payload with Zod
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      Service Layer                          │
-│        (Business logic, domain invariants, workflows)       │
-└─────────────────────────────┬───────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Repository Layer                         │
-│        (Data access queries, transactions, relations)       │
-└─────────────────────────────┬───────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Prisma ORM Singleton                     │
-└─────────────────────────────┬───────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     PostgreSQL Database                     │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 📁 Directory Structure
-
-```text
-oddo_stocksense/
+StockSense/
+├── app/
+│   ├── dashboard/
+│   ├── products/
+│   ├── operations/
+│   │   ├── receipts/
+│   │   ├── deliveries/
+│   │   ├── transfers/
+│   │   ├── adjustments/
+│   │   └── move-history/
+│   ├── settings/
+│   └── profile/
+│
+├── components/
+├── lib/
+│   ├── prisma/
+│   ├── auth/
+│   └── services/
+│
 ├── prisma/
-│   └── schema.prisma         # Comprehensive PostgreSQL schema & models
+│   └── schema.prisma
 │
-├── src/
-│   ├── app/                  # Next.js App Router pages and API endpoints
-│   │   ├── (auth)/login/     # Auth-ready structural placeholder
-│   │   ├── dashboard/        # Main KPI dashboard and recent activity ledger
-│   │   ├── products/         # Product catalog and category hierarchy
-│   │   ├── operations/       # Operational workflows
-│   │   │   ├── receipts/     # Incoming stock from vendors
-│   │   │   ├── deliveries/   # Outgoing customer orders
-│   │   │   ├── transfers/    # Inter-location warehouse transfers
-│   │   │   ├── adjustments/  # Physical count discrepancies
-│   │   │   └── ledger/       # Comprehensive audit movement history
-│   │   ├── settings/
-│   │   │   └── warehouses/   # Multi-warehouse and location hierarchy
-│   │   └── api/
-│   │       ├── health/       # Health check & database ping route
-│   │       └── products/     # Layered CRUD route handler
-│   │
-│   ├── components/
-│   │   ├── layout/           # AppShell, Sidebar navigation, Header
-│   │   ├── ui/               # Reusable atomic UI elements (Card, Button, Badge, Input)
-│   │   └── shared/           # KpiCard, StatusBadge, PageHeader, PlaceholderView
-│   │
-│   ├── lib/
-│   │   ├── prisma.ts         # PrismaClient singleton (prevents dev reload exhaustion)
-│   │   ├── constants/        # System enums, UOM list, navigation schema
-│   │   ├── validations/      # Zod validation schemas (product, warehouse, operations)
-│   │   └── utils/            # Styling helper (cn), formatters, typed API error handlers
-│   │
-│   ├── repositories/         # Database access layer (Product, Warehouse, Stock, Ledger)
-│   ├── services/             # Business domain logic (Product, Stock, Operation, Dashboard)
-│   ├── types/                # Domain types, DTOs, and extended relation types
-│   └── config/               # Site settings and navigation definitions
-│
-├── .env                      # Local environment configuration
-├── .env.example              # Safe environment variable template
-├── .gitignore                # Git ignore rules protecting credentials and artifacts
-├── package.json              # Project dependencies and scripts
-├── tsconfig.json             # Strict TypeScript configuration
-└── README.md                 # Project documentation
+├── public/
+├── .env.example
+├── .gitignore
+├── package.json
+└── README.md
 ```
 
----
-
-## 🗄️ Database Design & Models
-
-The PostgreSQL schema (`prisma/schema.prisma`) defines the core entities:
-
-1. **User & Roles**:
-   - `User` with roles: `ADMIN`, `INVENTORY_MANAGER`, `WAREHOUSE_STAFF`.
-2. **Catalog**:
-   - `Category`: Self-referencing parent-child category tree.
-   - `Product`: Name, unique `sku`, `uom` (Units, kg, liters, etc.), `isActive`, and category relation.
-3. **Warehouses & Locations**:
-   - `Warehouse`: Multiple distinct physical facilities.
-   - `Location`: Hierarchical locations (Main Warehouse, Production Floor, Rack A, Bin 1) with `LocationType` (`INTERNAL`, `VENDOR`, `CUSTOMER`, `INVENTORY_LOSS`, `PRODUCTION`, `TRANSIT`).
-4. **Stock & Reorder Rules**:
-   - `Stock`: Maps `Product` + `Location` = `Current Quantity` (with reserved quantity support).
-   - `ReorderRule`: Per-product min/max stock thresholds and reorder quantities.
-5. **Inventory Operations**:
-   - `Receipt` + `ReceiptItem`: Vendor incoming shipments.
-   - `Delivery` + `DeliveryItem`: Customer outgoing delivery orders.
-   - `InternalTransfer` + `InternalTransferItem`: Inter-location stock transfers.
-   - `Adjustment` + `AdjustmentItem`: Theoretical vs. counted physical inventory reconciliation.
-   - `OperationStatus` enum: `DRAFT`, `WAITING`, `READY`, `DONE`, `CANCELED`.
-6. **Stock Ledger (Audit Trail)**:
-   - `StockLedger`: Immutable chronological record of every movement with reference number, operation type, source/destination locations, quantity, and user accountability.
+> The actual structure may differ slightly depending on the implementation.
 
 ---
 
-## ⚙️ Environment Setup
+## ⚙️ Requirements
 
-### 1. Clone & Install Dependencies
+Before running StockSense, install:
+
+* Node.js 18+
+* npm
+* PostgreSQL
+* Git
+
+---
+
+## 📥 Installation
+
+Clone the repository:
 
 ```bash
-git clone <repo-url>
-cd oddo_stocksense
+git clone YOUR_GITHUB_REPOSITORY_URL
+```
+
+Go to the project:
+
+```bash
+cd StockSense
+```
+
+Install dependencies:
+
+```bash
 npm install
 ```
 
-### 2. Configure Environment Variables
+---
 
-Copy `.env.example` to `.env`:
+## 🔐 Environment Variables
 
-```bash
-cp .env.example .env
-```
-
-Update your `.env` file with your PostgreSQL connection strings:
+Create a `.env.local` file:
 
 ```env
-DATABASE_URL="postgresql://user:password@localhost:5432/stocksense_db?schema=public"
-DIRECT_URL="postgresql://user:password@localhost:5432/stocksense_db?schema=public"
+DATABASE_URL="your-postgresql-database-url"
 
-NEXT_PUBLIC_APP_NAME="StockSense"
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-NODE_ENV="development"
+AUTH_SECRET="your-long-random-secret"
 
-AUTH_SECRET="super-secret-jwt-key-min-32-chars-change-in-prod"
+RESEND_API_KEY="your-resend-api-key"
+
+EMAIL_FROM="your-verified-sender@example.com"
 ```
+
+Never commit `.env.local` or real credentials to GitHub.
+
+Use `.env.example` as the template.
 
 ---
 
-## 💾 Database Setup
+## 🔐 Password Reset OTP
 
-### Validate Prisma Schema
+StockSense uses an OTP-based password reset system.
 
-```bash
-npx prisma validate
+### Flow
+
+```text
+Forgot Password
+       ↓
+Enter Registered Email
+       ↓
+Generate 6-Digit OTP
+       ↓
+OTP Sent to Email
+       ↓
+Enter OTP
+       ↓
+Verify OTP
+       ↓
+Create New Password
+       ↓
+Password Reset Successful
 ```
 
-### Generate Prisma Client
+### OTP Security
+
+* OTP is 6 digits.
+* OTP expires after 10 minutes.
+* OTP is stored as a hash in the database.
+* OTP cannot be reused after successful verification.
+* Invalid or expired OTPs are rejected.
+* Passwords are securely hashed.
+* OTPs are never stored as plain text.
+
+### Email Configuration
+
+StockSense uses Resend for sending password-reset OTP emails.
+
+Add the following variables to `.env.local`:
+
+```env
+RESEND_API_KEY="your-resend-api-key"
+EMAIL_FROM="your-verified-sender@example.com"
+```
+
+Do not commit `.env.local` or the Resend API key to GitHub.
+
+For development, make sure the sender email/domain is configured correctly in Resend.
+
+### Password Reset Email
+
+The user receives an email containing:
+
+```text
+StockSense Password Reset OTP
+
+Your OTP is: 123456
+
+This OTP expires in 10 minutes.
+
+If you did not request a password reset, you can safely ignore this email.
+
+StockSense Team
+```
+
+The actual OTP is generated dynamically and is never hardcoded.
+
+### Development Troubleshooting
+
+If the OTP email is not received:
+
+1. Check the `RESEND_API_KEY`.
+2. Check that `EMAIL_FROM` is a verified sender.
+3. Check the Resend email logs.
+4. Check the recipient's Spam/Junk folder.
+5. Check the server terminal for email-sending errors.
+
+Never expose the Resend API key or OTP in client-side code.
+
+---
+
+## 🗄️ Database Setup
+
+Create/configure your PostgreSQL database.
+
+Then run:
 
 ```bash
 npx prisma generate
 ```
 
-### Apply Migrations (when PostgreSQL is running)
+Apply migrations:
 
 ```bash
-npx prisma migrate dev --name init
+npx prisma migrate dev
 ```
 
-*Note: If a PostgreSQL database is not connected during local inspection, Prisma Client types are already compiled and all models are fully accessible in offline mode.*
+If the project contains seed data:
+
+```bash
+npx prisma db seed
+```
 
 ---
 
-## 🖥️ Running Development Server
+## ▶️ Run Development Server
+
+Start the application:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to access the StockSense application shell and dashboard.
+Open:
 
-To run TypeScript verification:
-
-```bash
-npx tsc --noEmit
+```text
+http://localhost:3000
 ```
 
-To run a production build:
+---
+
+## 🧪 Testing
+
+Run lint:
+
+```bash
+npm run lint
+```
+
+Run production build:
 
 ```bash
 npm run build
 ```
-<<<<<<< HEAD
-=======
+
+Start production server:
+
+```bash
+npm start
+```
 
 ---
 
-## 🎯 Phase Status
+## 🔄 Core Inventory Flow
 
-- [x] **Phase 1: Project Foundation & Architecture** *(Completed)*
-  - [x] Next.js App Router project initialized with TypeScript & Tailwind CSS
-  - [x] PostgreSQL & Prisma ORM configured with all core entities & relations
-  - [x] Clean layered architecture (Routes -> Services -> Repositories -> Database)
-  - [x] Comprehensive Zod validation schemas
-  - [x] Singleton Prisma Client with connection pooling safety
-  - [x] Application Shell with responsive Sidebar, Header, and status indicators
-  - [x] Dashboard with 6 required KPI cards and recent ledger movement table
-  - [x] Clean placeholder routes for all navigation modules
-  - [x] Health check API endpoint (`/api/health`) and Products API route handler
-  - [x] Production build and TypeScript validation passing 100%
+StockSense follows this inventory lifecycle:
 
-- [x] **Phase 2: Authentication & User Management** *(Completed)*
-  - [x] Secure password hashing using `bcryptjs` (salt 12)
-  - [x] Edge-compatible JWT session management via `jose` with secure HTTP-only cookies
-  - [x] Next.js Proxy/Middleware protecting all routes (`/dashboard`, `/products`, `/operations`, `/settings`, `/profile`)
-  - [x] Interactive User Signup (`/signup`) with role selection (`INVENTORY_MANAGER` / `WAREHOUSE_STAFF`)
-  - [x] Interactive User Login (`/login`) with session creation and dashboard redirection
-  - [x] OTP-based Password Reset flow:
-    - [x] `PasswordResetOTP` Prisma model (hashed OTP, 10-min expiration, attempt limits)
-    - [x] Step 1: `/forgot-password` (Email input & OTP generation)
-    - [x] Step 2: `/reset-password` (OTP verification & new password update)
-    - [x] Development mode test OTP console logging & UI helper
-  - [x] My Profile (`/profile`) with account info, name updates, and password change
-  - [x] Header profile dropdown with "My Profile" and "Sign Out" actions
-  - [x] Server-side guards: `requireAuth()` & `requireRole(["INVENTORY_MANAGER", ...])`
-  - [x] Comprehensive automated unit & crypto test suite passing 100%
+```text
+Receive Stock
+      ↓
+Stock Increases
+      ↓
+Internal Transfer
+      ↓
+Stock Location Changes
+      ↓
+Delivery
+      ↓
+Stock Decreases
+      ↓
+Physical Count
+      ↓
+Inventory Adjustment
+      ↓
+Stock Corrected
+      ↓
+Stock Ledger
+      ↓
+Dashboard
+      ↓
+Low Stock Warning
+```
 
-- [x] **Phase 3: Product & Category Management** *(Completed)*
-  - [x] Product master CRUD with dynamic category relation and controlled Units of Measure
-  - [x] SKU unique validation (case-insensitive) and duplicate prevention
-  - [x] Category directory with case-insensitive unique naming and live product counts
-  - [x] Product search by Name and SKU with database-backed query filters
-  - [x] Category and Status filters (Active / Inactive) with server-side pagination
-  - [x] Product detail page with live "Stock by Location" breakdown table
-  - [x] Optional Initial Stock allocation to valid physical locations with stock ledger audit trail
-  - [x] Safe product deactivation (`isActive: false`) preserving historical inventory integrity
-  - [x] Server-side authorization guards on all API routes and mutations
-  - [x] Automated test suite verifying validation rules, SKU uniqueness, and error handling
+---
 
-- [x] **Phase 4: Warehouse & Location Management** *(Completed)*
-  - [x] Multi-warehouse management (`/settings/warehouses`) with unique warehouse codes and search
-  - [x] Location hierarchy and management (`/settings/warehouses/[id]`) with controlled LocationType
-  - [x] Scoped location codes within warehouses (`warehouseId, code` compound unique)
-  - [x] Product-Location stock availability mapping (`Stock` unique constraint on `productId, locationId`)
-  - [x] Live "Stock by Location" breakdown and aggregate calculation across warehouses
-  - [x] Reusable `WarehouseLocationFilter` component for dynamic warehouse/location scoping
-  - [x] Safe warehouse and location deactivation protecting historical stock and movements
-  - [x] Server-side authorization (`INVENTORY_MANAGER` / `ADMIN`) on all creation & modification endpoints
-  - [x] Automated test suite verifying warehouse validation, location types, and stock queries
+## 📊 Example
 
-- [x] **Phase 5: Receipts / Incoming Stock** *(Completed)*
-  - [x] Supplier entity & lightweight vendor directory with unique vendor codes
-  - [x] Unique, concurrent-safe receipt sequencing (`REC-000001`, `REC-000002`...)
-  - [x] Receipt status lifecycle: `DRAFT` ➔ `READY` ➔ `DONE` or `CANCELED`
-  - [x] Draft receipts enforce zero stock mutation and zero ledger entries
-  - [x] Multi-line item creation with real-time product selector and warehouse-scoped locations
-  - [x] Atomic transactional receipt validation (`$transaction`) crediting stock directly to `(productId, locationId)`
-  - [x] Immutable Stock Ledger entry logging on receipt completion
-  - [x] Strict validation idempotency and race condition prevention
-  - [x] Responsive Receipt List, Creation, and Detail views with confirmation modal
-  - [x] Server-side authorization (`INVENTORY_MANAGER` / `ADMIN`) on all validation & cancellation endpoints
+Suppose the warehouse receives:
 
-- [ ] **Phase 6: Delivery Orders / Outgoing Stock** *(Upcoming)*
-  - [ ] Customer entity & shipping address directory
-  - [ ] Outgoing Delivery Order lifecycle (`DRAFT` → `WAITING` → `READY` → `DONE`)
-  - [ ] Stock reservation & availability verification
-  - [ ] Atomic stock deduction on delivery validation with Stock Ledger audit logging
+```text
+100 Steel Rods
+```
+
+Initial stock:
+
+```text
+Rack A = 0
+```
+
+After receipt:
+
+```text
+Rack A = 100
+```
+
+Transfer 30 units:
+
+```text
+Rack A = 70
+Rack B = 30
+```
+
+Deliver 20 units:
+
+```text
+Rack B = 10
+```
+
+Physical count shows 7:
+
+```text
+System = 10
+Physical = 7
+Adjustment = -3
+```
+
+Final stock:
+
+```text
+Rack A = 70
+Rack B = 7
+
+Total = 77
+```
+
+All movements are recorded in the Stock Ledger.
+
+---
+
+## 🔒 Security
+
+* Passwords are hashed.
+* Authentication-protected routes are used.
+* Stock-changing operations are validated server-side.
+* Database transactions are used for stock movements.
+* Environment secrets are not stored in Git.
+* OTPs are not stored as plaintext.
+
+---
+
+## 📱 Responsive Design
+
+StockSense is designed to work on:
+
+* Desktop
+* Tablet
+* Mobile
+
+---
+
+## 🚀 Deployment
+
+The application can be deployed using a Next.js-compatible hosting platform such as Vercel with a production PostgreSQL database.
+
+Before deployment:
+
+1. Configure production environment variables.
+2. Configure PostgreSQL.
+3. Run Prisma migrations.
+4. Build the application.
+5. Test authentication.
+6. Test inventory operations.
+7. Verify production database connectivity.
+
+---
+
+## 👥 Target Users
+
+StockSense is designed for:
+
+* Inventory Managers
+* Warehouse Staff
+
+---
+
+## 🎯 Hackathon Demo
+
+The recommended demonstration flow is:
+
+```text
+Login
+ ↓
+Dashboard
+ ↓
+Create/View Product
+ ↓
+Receive 100 Units
+ ↓
+Transfer 30 Units
+ ↓
+Deliver 20 Units
+ ↓
+Adjust Physical Stock
+ ↓
+Open Move History
+ ↓
+Return to Dashboard
+ ↓
+Show Low Stock Warning
+```
+
+---
+
+## 📌 Project Status
+
+**Status:** Hackathon Demo Ready
+
+Core inventory lifecycle:
+
+* ✅ Authentication
+* ✅ Product Management
+* ✅ Warehouse & Locations
+* ✅ Receipts
+* ✅ Delivery Orders
+* ✅ Internal Transfers
+* ✅ Inventory Adjustments
+* ✅ Stock Ledger
+* ✅ Dashboard
+* ✅ Low Stock / Reordering Rules
+* ✅ Responsive UI
+* ✅ PostgreSQL + Prisma
+
+---
+
+## 📄 License
+
+This project was developed as part of the Odoo Hackathon.

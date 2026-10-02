@@ -64,15 +64,17 @@ export const resetPasswordSchema = z
   .object({
     email: z
       .string()
-      .min(1, "Email is required")
       .email("Please enter a valid email address")
       .toLowerCase()
-      .trim(),
+      .trim()
+      .optional(),
     otp: z
       .string()
       .min(6, "OTP must be 6 digits")
       .max(6, "OTP must be 6 digits")
-      .regex(/^\d{6}$/, "OTP must consist of 6 numeric digits"),
+      .regex(/^\d{6}$/, "OTP must consist of 6 numeric digits")
+      .optional(),
+    resetToken: z.string().optional(),
     newPassword: z
       .string()
       .min(6, "New password must be at least 6 characters")
@@ -82,6 +84,10 @@ export const resetPasswordSchema = z
   .refine((data) => data.newPassword === data.confirmNewPassword, {
     message: "Passwords do not match",
     path: ["confirmNewPassword"],
+  })
+  .refine((data) => !!data.resetToken || (!!data.email && !!data.otp), {
+    message: "Either resetToken or email with OTP is required",
+    path: ["resetToken"],
   });
 
 export const updateProfileSchema = z.object({

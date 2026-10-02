@@ -33,7 +33,19 @@ async function main() {
     },
   });
 
-  console.log(`✓ Seeded users: ${manager.email}, ${staff.email}`);
+  const verifiedUser = await prisma.user.upsert({
+    where: { email: "hkinvincible021@gmail.com" },
+    update: {},
+    create: {
+      name: "HK Invincible",
+      email: "hkinvincible021@gmail.com",
+      passwordHash,
+      role: UserRole.INVENTORY_MANAGER,
+      isActive: true,
+    },
+  });
+
+  console.log(`✓ Seeded users: ${manager.email}, ${staff.email}, ${verifiedUser.email}`);
 
   // 2. Seed Default Categories
   const rawMaterials = await prisma.category.upsert({

@@ -7,6 +7,7 @@ const PUBLIC_PAGES = [
   "/login",
   "/signup",
   "/forgot-password",
+  "/verify-otp",
   "/reset-password",
 ];
 
@@ -14,6 +15,7 @@ const PUBLIC_API_ROUTES = [
   "/api/auth/login",
   "/api/auth/signup",
   "/api/auth/forgot-password",
+  "/api/auth/verify-otp",
   "/api/auth/reset-password",
   "/api/auth/logout",
   "/api/health",

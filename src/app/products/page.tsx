@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/shared/status-badge";
 import {
   Package,
   Plus,
@@ -171,28 +172,7 @@ function ProductsListContent() {
   };
 
   const renderStockBadge = (product: ProductItem) => {
-    if (product.stockStatus === "OUT_OF_STOCK") {
-      return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-          🔴 Out of Stock
-        </span>
-      );
-    }
-    if (product.stockStatus === "LOW_STOCK") {
-      return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800" title="Stock below reorder threshold. Reorder recommended.">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-          🟡 Low Stock
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-        🟢 In Stock
-      </span>
-    );
+    return <StatusBadge status={product.stockStatus} />;
   };
 
   return (

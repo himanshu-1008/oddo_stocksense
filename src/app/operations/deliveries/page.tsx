@@ -170,31 +170,31 @@ export default function DeliveriesPage() {
   }, [deliveries, totalCount]);
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Header */}
       <PageHeader
         title="Delivery Orders (Outgoing Stock)"
         description="Manage customer dispatches, fulfill pick & pack operations, and validate outgoing stock movements."
       >
         {canCreate && (
-          <Link href="/operations/deliveries/new">
-            <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium shadow-md shadow-emerald-500/20">
-              <Plus className="h-4 w-4 mr-1.5" />
+          <Button asChild className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs gap-2">
+            <Link href="/operations/deliveries/new">
+              <Plus className="h-4 w-4" />
               New Delivery Order
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         )}
       </PageHeader>
 
       {/* KPI / Status Summary Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          { label: "All Orders", value: totalCount, key: "ALL", icon: Layers, color: "text-zinc-400" },
-          { label: "Drafts", value: statusCounts.DRAFT, key: "DRAFT", icon: Clock, color: "text-zinc-400" },
-          { label: "Waiting Pick", value: statusCounts.WAITING, key: "WAITING", icon: AlertCircle, color: "text-amber-400" },
-          { label: "Ready Pack", value: statusCounts.READY, key: "READY", icon: Package, color: "text-blue-400" },
-          { label: "Completed", value: statusCounts.DONE, key: "DONE", icon: CheckCircle2, color: "text-emerald-400" },
-          { label: "Canceled", value: statusCounts.CANCELED, key: "CANCELED", icon: XCircle, color: "text-red-400" },
+          { label: "All Orders", value: totalCount, key: "ALL", icon: Layers, color: "text-slate-500" },
+          { label: "Drafts", value: statusCounts.DRAFT, key: "DRAFT", icon: Clock, color: "text-slate-500" },
+          { label: "Waiting Pick", value: statusCounts.WAITING, key: "WAITING", icon: AlertCircle, color: "text-amber-500" },
+          { label: "Ready Pack", value: statusCounts.READY, key: "READY", icon: Package, color: "text-blue-500" },
+          { label: "Completed", value: statusCounts.DONE, key: "DONE", icon: CheckCircle2, color: "text-emerald-500" },
+          { label: "Canceled", value: statusCounts.CANCELED, key: "CANCELED", icon: XCircle, color: "text-rose-500" },
         ].map((tab) => {
           const isActive = statusFilter === tab.key;
           const Icon = tab.icon;
@@ -205,17 +205,17 @@ export default function DeliveriesPage() {
                 setStatusFilter(tab.key);
                 setPage(1);
               }}
-              className={`p-3 rounded-xl border text-left transition-all duration-200 flex flex-col justify-between ${
+              className={`p-3 rounded-xl border text-left transition-all duration-150 flex flex-col justify-between cursor-pointer ${
                 isActive
-                  ? "bg-zinc-800/90 border-emerald-500/50 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/30"
-                  : "bg-zinc-900/50 border-zinc-800/80 hover:bg-zinc-800/40 hover:border-zinc-700 text-zinc-400"
+                  ? "bg-indigo-50/70 dark:bg-indigo-950/40 border-indigo-300 dark:border-indigo-800 shadow-xs"
+                  : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60"
               }`}
             >
               <div className="flex items-center justify-between text-xs font-medium">
-                <span className={isActive ? "text-zinc-200" : "text-zinc-400"}>{tab.label}</span>
+                <span className={isActive ? "text-indigo-950 dark:text-indigo-200 font-semibold" : "text-slate-500"}>{tab.label}</span>
                 <Icon className={`h-3.5 w-3.5 ${tab.color}`} />
               </div>
-              <div className="mt-2 text-xl font-bold text-zinc-100">
+              <div className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">
                 {tab.key === "ALL" ? totalCount : tab.value}
               </div>
             </button>
@@ -224,16 +224,16 @@ export default function DeliveriesPage() {
       </div>
 
       {/* Filter & Search Bar */}
-      <Card className="p-4 bg-zinc-900/60 border-zinc-800/80 backdrop-blur-sm">
+      <Card className="p-4 bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 shadow-xs">
         <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-3">
           {/* Search Box */}
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               placeholder="Search by DEL number, customer, SKU, product name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 bg-zinc-950/60 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-500"
+              className="pl-9 bg-slate-50/70 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 text-xs"
             />
           </div>
 
@@ -246,7 +246,7 @@ export default function DeliveriesPage() {
                 setPage(1);
               }}
               aria-label="Filter by Warehouse"
-              className="w-full h-9 rounded-lg px-3 bg-zinc-950/60 border border-zinc-800 text-zinc-200 text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full h-9 rounded-lg px-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
             >
               <option value="ALL">All Warehouses</option>
               {warehouses.map((wh) => (
@@ -261,7 +261,7 @@ export default function DeliveriesPage() {
           <Button
             type="submit"
             variant="outline"
-            className="border-zinc-700 bg-zinc-800/60 hover:bg-zinc-750 text-zinc-200"
+            className="h-9 px-4 text-xs border-slate-200 dark:border-slate-700"
           >
             Filter
           </Button>
@@ -277,7 +277,7 @@ export default function DeliveriesPage() {
                 setWarehouseFilter("ALL");
                 setPage(1);
               }}
-              className="text-zinc-400 hover:text-zinc-200"
+              className="h-9 text-xs text-slate-500 hover:text-slate-900"
             >
               Clear
             </Button>
@@ -286,49 +286,49 @@ export default function DeliveriesPage() {
       </Card>
 
       {/* Delivery Orders List */}
-      <Card className="bg-zinc-900/60 border-zinc-800/80 overflow-hidden">
+      <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-xs">
         {loading ? (
           <div className="py-20 flex flex-col items-center justify-center space-y-3">
-            <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-            <p className="text-sm text-zinc-400">Loading delivery orders...</p>
+            <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+            <p className="text-xs text-slate-500">Loading delivery orders...</p>
           </div>
         ) : deliveries.length === 0 ? (
-          <div className="py-16 text-center space-y-4">
-            <div className="h-12 w-12 rounded-full bg-zinc-800 flex items-center justify-center mx-auto text-zinc-400">
+          <div className="py-16 text-center space-y-3">
+            <div className="h-12 w-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
               <Truck className="h-6 w-6" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-base font-medium text-zinc-200">No delivery orders found</h3>
-              <p className="text-sm text-zinc-400 max-w-sm mx-auto">
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">No delivery orders found</h3>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
                 {search || statusFilter !== "ALL" || warehouseFilter !== "ALL"
                   ? "Try adjusting your search criteria or resetting active filters."
                   : "Create your first outgoing delivery order to dispatch inventory to customers."}
               </p>
             </div>
             {canCreate && (
-              <Link href="/operations/deliveries/new">
-                <Button className="mt-2 bg-emerald-600 hover:bg-emerald-500 text-white">
-                  <Plus className="h-4 w-4 mr-1.5" />
+              <Button asChild size="sm" className="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs">
+                <Link href="/operations/deliveries/new">
+                  <Plus className="h-3.5 w-3.5 mr-1" />
                   Create First Delivery
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             )}
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-zinc-950/60 text-zinc-400 uppercase text-[11px] font-semibold border-b border-zinc-800/80">
+            <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+              <thead className="bg-slate-50 dark:bg-slate-900/80 text-slate-500 uppercase text-[11px] font-semibold border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="py-3 px-4">Delivery Order</th>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Warehouse & Source</th>
-                  <th className="py-3 px-4">Items / Quantity</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Created Date</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3.5 px-6">Delivery Order</th>
+                  <th className="py-3.5 px-6">Customer</th>
+                  <th className="py-3.5 px-6">Warehouse & Source</th>
+                  <th className="py-3.5 px-6">Items / Quantity</th>
+                  <th className="py-3.5 px-6">Status</th>
+                  <th className="py-3.5 px-6">Created Date</th>
+                  <th className="py-3.5 px-6 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/60">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
                 {deliveries.map((delivery) => {
                   const totalDemand = delivery.items.reduce(
                     (acc, item) => acc + item.quantityDemand,
@@ -342,32 +342,32 @@ export default function DeliveriesPage() {
                   return (
                     <tr
                       key={delivery.id}
-                      className="hover:bg-zinc-800/40 transition-colors group"
+                      className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors group"
                     >
                       {/* Delivery Number */}
-                      <td className="py-3.5 px-4 font-mono font-medium text-zinc-100">
+                      <td className="py-3.5 px-6 font-mono font-semibold text-indigo-600 dark:text-indigo-400">
                         <Link
                           href={`/operations/deliveries/${delivery.id}`}
-                          className="hover:text-emerald-400 transition-colors flex items-center gap-1.5"
+                          className="hover:underline flex items-center gap-1.5"
                         >
-                          <Truck className="h-4 w-4 text-emerald-400" />
+                          <Truck className="h-3.5 w-3.5" />
                           <span>{delivery.referenceNumber}</span>
                         </Link>
                       </td>
 
                       {/* Customer */}
-                      <td className="py-3.5 px-4 text-zinc-200 font-medium">
+                      <td className="py-3.5 px-6 text-slate-900 dark:text-slate-100 font-medium">
                         {delivery.customerName}
                       </td>
 
                       {/* Warehouse & Source */}
-                      <td className="py-3.5 px-4 text-zinc-300">
+                      <td className="py-3.5 px-6 text-slate-600 dark:text-slate-400">
                         <div className="flex flex-col">
-                          <span className="font-medium text-zinc-200">
+                          <span className="font-medium text-slate-900 dark:text-slate-100">
                             {delivery.warehouse?.name || "Main Warehouse"}
                           </span>
                           {delivery.sourceLocation && (
-                            <span className="text-xs text-zinc-400">
+                            <span className="text-[11px] text-slate-400">
                               {delivery.sourceLocation.name} ({delivery.sourceLocation.code})
                             </span>
                           )}
@@ -375,12 +375,12 @@ export default function DeliveriesPage() {
                       </td>
 
                       {/* Items */}
-                      <td className="py-3.5 px-4 text-zinc-300">
+                      <td className="py-3.5 px-6 text-slate-600 dark:text-slate-400">
                         <div className="flex flex-col">
-                          <span className="font-medium text-zinc-100">
+                          <span className="font-medium text-slate-900 dark:text-slate-100">
                             {delivery.items.length} {delivery.items.length === 1 ? "line item" : "line items"}
                           </span>
-                          <span className="text-xs text-zinc-400">
+                          <span className="text-[11px] text-slate-400">
                             {delivery.status === "DONE"
                               ? `${totalDelivered} units dispatched`
                               : `${totalDemand} units requested`}
@@ -389,31 +389,28 @@ export default function DeliveriesPage() {
                       </td>
 
                       {/* Status */}
-                      <td className="py-3.5 px-4">
+                      <td className="py-3.5 px-6">
                         <StatusBadge status={delivery.status} />
                       </td>
 
                       {/* Created Date */}
-                      <td className="py-3.5 px-4 text-xs text-zinc-400">
+                      <td className="py-3.5 px-6 text-[11px] text-slate-500">
                         <div className="flex flex-col">
                           <span>{new Date(delivery.createdAt).toLocaleDateString()}</span>
-                          <span className="text-[11px] text-zinc-400">
+                          <span className="text-[10px] text-slate-400">
                             by {delivery.createdBy.name}
                           </span>
                         </div>
                       </td>
 
                       {/* Actions */}
-                      <td className="py-3.5 px-4 text-right">
-                        <Link href={`/operations/deliveries/${delivery.id}`}>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 px-2.5 text-zinc-300 hover:text-emerald-400 hover:bg-zinc-800"
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            View
-                          </Button>
+                      <td className="py-3.5 px-6 text-right">
+                        <Link
+                          href={`/operations/deliveries/${delivery.id}`}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          View
                         </Link>
                       </td>
                     </tr>
@@ -426,13 +423,13 @@ export default function DeliveriesPage() {
 
         {/* Pagination Bar */}
         {!loading && deliveries.length > 0 && (
-          <div className="p-4 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400 bg-zinc-950/40">
+          <div className="py-3.5 px-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 bg-slate-50 dark:bg-slate-900/80">
             <div>
-              Showing <span className="font-semibold text-zinc-200">{(page - 1) * 15 + 1}</span> to{" "}
-              <span className="font-semibold text-zinc-200">
+              Showing <span className="font-semibold text-slate-900 dark:text-slate-100">{(page - 1) * 15 + 1}</span> to{" "}
+              <span className="font-semibold text-slate-900 dark:text-slate-100">
                 {Math.min(page * 15, totalCount)}
               </span>{" "}
-              of <span className="font-semibold text-zinc-200">{totalCount}</span> delivery orders
+              of <span className="font-semibold text-slate-900 dark:text-slate-100">{totalCount}</span> delivery orders
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -440,11 +437,11 @@ export default function DeliveriesPage() {
                 size="sm"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-8 border-zinc-800 bg-zinc-900 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
+                className="h-8 text-xs border-slate-200 dark:border-slate-700"
               >
                 Previous
               </Button>
-              <span className="px-2 font-medium text-zinc-300">
+              <span className="px-2 font-medium text-slate-700 dark:text-slate-300">
                 Page {page} of {totalPages}
               </span>
               <Button
@@ -452,7 +449,7 @@ export default function DeliveriesPage() {
                 size="sm"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="h-8 border-zinc-800 bg-zinc-900 text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
+                className="h-8 text-xs border-slate-200 dark:border-slate-700"
               >
                 Next
               </Button>

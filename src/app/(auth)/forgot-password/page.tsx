@@ -17,10 +17,8 @@ import {
   KeyRound,
   AlertCircle,
   Loader2,
-  CheckCircle2,
   ArrowLeft,
   ArrowRight,
-  ShieldAlert,
 } from "lucide-react";
 
 export default function ForgotPasswordPage() {
@@ -29,10 +27,6 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [successData, setSuccessData] = React.useState<{
-    message: string;
-    devOtp?: string;
-  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,13 +43,12 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setError(data.error?.message || "Failed to process request. Please try again.");
+        setError(data.error?.message || "Unable to send verification code. Please try again.");
         setIsLoading(false);
         return;
       }
 
-      setSuccessData(data.data);
-      setIsLoading(false);
+      router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
     } catch (err) {
       setError("An unexpected network error occurred. Please try again.");
       setIsLoading(false);
@@ -70,10 +63,10 @@ export default function ForgotPasswordPage() {
             <KeyRound className="w-7 h-7" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            Reset Your Password
+            Forgot Password
           </CardTitle>
-          <CardDescription className="text-xs text-slate-500 dark:text-slate-400">
-            Enter your registered account email to receive a 6-digit verification code.
+          <CardDescription className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            Enter your registered email address and we&apos;ll send you a verification code.
           </CardDescription>
         </CardHeader>
 
@@ -88,75 +81,39 @@ export default function ForgotPasswordPage() {
             </div>
           )}
 
-          {successData ? (
-            <div className="space-y-4">
-              <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 p-4 border border-emerald-200 dark:border-emerald-800/50 text-xs text-emerald-900 dark:text-emerald-200 space-y-2">
-                <div className="flex items-center gap-2 font-semibold text-emerald-800 dark:text-emerald-300">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  Verification Code Dispatched
-                </div>
-                <p className="text-[11px] leading-relaxed opacity-90">
-                  {successData.message}
-                </p>
-
-                {successData.devOtp && (
-                  <div className="mt-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-center">
-                    <p className="text-[10px] uppercase font-bold tracking-wider text-amber-700 dark:text-amber-400 mb-1 flex items-center justify-center gap-1">
-                      <ShieldAlert className="w-3.5 h-3.5" /> Development Mode Test OTP
-                    </p>
-                    <p className="text-2xl font-mono font-bold tracking-widest text-amber-950 dark:text-amber-100">
-                      {successData.devOtp}
-                    </p>
-                    <p className="text-[10px] text-amber-700 dark:text-amber-400 mt-1">
-                      (Logged to dev server console)
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <Button asChild className="w-full h-10 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">
-                <Link
-                  href={`/reset-password?email=${encodeURIComponent(email)}`}
-                  className="gap-2"
-                >
-                  Enter Verification Code <ArrowRight className="w-4 h-4" />
-                </Link>
-              </Button>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Email
+              </label>
+              <Input
+                type="email"
+                required
+                autoFocus
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="manager@stocksense.io"
+                className="bg-slate-50 dark:bg-slate-900/80 h-10 text-sm"
+              />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Registered Email Address
-                </label>
-                <Input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="manager@stocksense.io"
-                  className="bg-slate-50 dark:bg-slate-900/80 h-10 text-sm"
-                />
-              </div>
 
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-10 text-sm font-semibold shadow-md bg-indigo-600 hover:bg-indigo-700 text-white"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generating OTP...
-                  </>
-                ) : (
-                  <>
-                    Send Verification Code (OTP) <ArrowRight className="w-4 h-4 ml-1.5" />
-                  </>
-                )}
-              </Button>
-            </form>
-          )}
+            <Button
+              type="submit"
+              disabled={isLoading || !email}
+              className="w-full h-10 text-sm font-semibold shadow-md bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Sending OTP...
+                </>
+              ) : (
+                <>
+                  Send OTP <ArrowRight className="w-4 h-4 ml-1.5" />
+                </>
+              )}
+            </Button>
+          </form>
         </CardContent>
 
         <CardFooter className="flex items-center justify-center pt-2 pb-6 border-t border-slate-100 dark:border-slate-800/80">
@@ -164,7 +121,7 @@ export default function ForgotPasswordPage() {
             href="/login"
             className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Sign In
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Login
           </Link>
         </CardFooter>
       </Card>

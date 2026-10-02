@@ -519,7 +519,7 @@ export class DeliveryRepository {
           },
         },
       });
-    });
+    }, { maxWait: 15000, timeout: 30000 });
   }
 
   async cancel(id: string) {

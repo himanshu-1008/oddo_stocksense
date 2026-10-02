@@ -1,7 +1,7 @@
 import { productRepository } from "@/repositories/product.repository";
 import { categoryRepository } from "@/repositories/category.repository";
 import { locationRepository } from "@/repositories/location.repository";
-import { ProductInput, UpdateProductInput, ProductQueryParams } from "@/lib/validations/product";
+import { ProductInput, UpdateProductInput, ProductQueryParams, productSchema, updateProductSchema } from "@/lib/validations/product";
 import { NotFoundError, ConflictError, ValidationError } from "@/lib/utils/api-error";
 
 export class ProductService {
@@ -33,22 +33,24 @@ export class ProductService {
   }
 
   async createProduct(input: ProductInput) {
+    const validated = productSchema.parse(input);
+
     // 1. Verify SKU uniqueness (case-insensitive)
-    const existingSku = await productRepository.findBySku(input.sku);
+    const existingSku = await productRepository.findBySku(validated.sku);
     if (existingSku) {
-      throw new ConflictError(`Product with SKU "${input.sku.toUpperCase()}" already exists.`);
+      throw new ConflictError(`Product with SKU "${validated.sku.toUpperCase()}" already exists.`);
     }
 
     // 2. Verify Category exists
-    const category = await categoryRepository.findById(input.categoryId);
+    const category = await categoryRepository.findById(validated.categoryId);
     if (!category) {
       throw new ValidationError("Selected category does not exist in the database.");
     }
 
     // 3. Verify Location exists if initial stock is provided
-    if (input.initialStock && input.initialStock.quantity > 0) {
+    if (validated.initialStock && validated.initialStock.quantity > 0) {
       const location = await locationRepository.findById(
-        input.initialStock.locationId
+        validated.initialStock.locationId
       );
       if (!location) {
         throw new ValidationError(
@@ -58,39 +60,40 @@ export class ProductService {
     }
 
     return productRepository.create({
-      name: input.name,
-      sku: input.sku,
-      description: input.description,
-      uom: input.uom,
-      categoryId: input.categoryId,
-      minimumStock: input.minimumStock ?? 0,
-      isActive: input.isActive,
-      initialStock: input.initialStock,
+      name: validated.name,
+      sku: validated.sku,
+      description: validated.description,
+      uom: validated.uom,
+      categoryId: validated.categoryId,
+      minimumStock: validated.minimumStock ?? 0,
+      isActive: validated.isActive,
+      initialStock: validated.initialStock,
     });
   }
 
   async updateProduct(id: string, input: UpdateProductInput) {
+    const validated = updateProductSchema.parse(input);
     const product = await this.getProductById(id);
 
     // If SKU is being updated, verify uniqueness
-    if (input.sku && input.sku.toUpperCase() !== product.sku.toUpperCase()) {
-      const existingSku = await productRepository.findBySku(input.sku, id);
+    if (validated.sku && validated.sku.toUpperCase() !== product.sku.toUpperCase()) {
+      const existingSku = await productRepository.findBySku(validated.sku, id);
       if (existingSku) {
         throw new ConflictError(
-          `Product with SKU "${input.sku.toUpperCase()}" already exists.`
+          `Product with SKU "${validated.sku.toUpperCase()}" already exists.`
         );
       }
     }
 
     // If category is being updated, verify category exists
-    if (input.categoryId && input.categoryId !== product.categoryId) {
-      const category = await categoryRepository.findById(input.categoryId);
+    if (validated.categoryId && validated.categoryId !== product.categoryId) {
+      const category = await categoryRepository.findById(validated.categoryId);
       if (!category) {
         throw new ValidationError("Selected category does not exist.");
       }
     }
 
-    return productRepository.update(id, input);
+    return productRepository.update(id, validated);
   }
 
   async deactivateProduct(id: string) {
